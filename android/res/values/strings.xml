@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">贝克街42号</string>
+    <string name="title_activity_main_tab">回到三国之前传</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_resetgame">重置游戏</string>
+
+    <string name="main_map">地图</string>
+    <string name="main_star">星盘</string>
+    <string name="main_fire">点火</string>
+    <string name="main_chase">追击</string>
+
+
+
+</resources>
