@@ -15,30 +15,42 @@ import com.ugame.gdx.tools.UGameScreen;
  */
 public class ChainScreen extends UGameScreen {
     private SwipeKnifeLight skl;                                            //刀光对象
-    private Sound sound;
+//    private Sound sound;
     public ChainScreen(){
         ScreenParams.initScreenParams(this.getStage().getWidth(), this.getStage().getHeight());
-        sound = Gdx.audio.newSound(new FileHandle(""));
+//        sound = Gdx.audio.newSound(new FileHandle(""));
         skl = SwipeKnifeManager.getInstance().getNomalKnife(this.stage.getCamera());
 
         stage.addCaptureListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println("touchDown");
                 skl.getSwipe().touchDown((int)(x* ScreenParams.scaleWidth),(int) ScreenParams.deviceY2drawY(y * ScreenParams.scaleHeight),pointer,button);
                 return true;
             }
 
             @Override
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println("touchUp");
                 skl.getSwipe().touchUp((int)(x* ScreenParams.scaleWidth),(int) ScreenParams.deviceY2drawY(y * ScreenParams.scaleHeight),pointer,button);
                 super.touchUp(event, x, y, pointer, button);
             }
 
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                System.out.println("touchDragged");
                 skl.getSwipe().touchDragged((int)(x* ScreenParams.scaleWidth),  (int) ScreenParams.deviceY2drawY(y * ScreenParams.scaleHeight), pointer);
                 super.touchDragged(event, x, y, pointer);
             }
         });
+
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+        skl.act(delta);
+        skl.draw(stage.getBatch(),1);
     }
 }

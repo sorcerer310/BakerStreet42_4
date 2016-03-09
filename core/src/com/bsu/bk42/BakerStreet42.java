@@ -8,14 +8,15 @@ import com.badlogic.gdx.Game;
 public class BakerStreet42 extends Game {
 //	SpriteBatch batch;
 //	Texture img;
-	public static final int MAPSCREEN = 0;																			//地图场景的默认索引
-	public static final int STARSCREEN = 1;																		//星星场景的默认索引
-	public static final int FIRESCREEN = 2;																		//放火场景的默认索引
-	public static final int FOLLOWUP = 3;																			//追击场景的默认索引
+	public static final int MAPSCREEN = 0;																				//地图场景的默认索引
+	public static final int STARSCREEN = 1;																				//星星场景的默认索引
+	public static final int FIRESCREEN = 2;																				//放火场景的默认索引
+	public static final int FOLLOWUP = 3;																				//追击场景的默认索引
 
-	public static MapScreen ms = null;																				//地图场景
-//	public static StarScreen ss = null;																				//星星场景
-//	public static FireScreen fs = null;																				//放火场景
+	public static MapScreen ms = null;																					//地图场景
+	public static ChainScreen cs = null;																				//锁链场景
+//	public static StarScreen ss = null;																					//星星场景
+//	public static FireScreen fs = null;																					//放火场景
 //	public static FollowUpScreen fus = null;																			//追击场景
 
 	@Override
@@ -28,7 +29,9 @@ public class BakerStreet42 extends Game {
 //			fs = new FireScreen();
 //		if(fus==null)
 //			fus = new FollowUpScreen();
-		this.setScreen(ms);
+//		this.setScreen(ms);
+		cs= new ChainScreen();
+		this.setScreen(cs);
 	}
 
 	/**
