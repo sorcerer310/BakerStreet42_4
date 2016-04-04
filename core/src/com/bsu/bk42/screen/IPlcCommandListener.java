@@ -1,4 +1,4 @@
-package com.bsu.bk42.com.bsu.bk42.screen;
+package com.bsu.bk42.screen;
 
 /**
  * 用于接收PLC命令的接口

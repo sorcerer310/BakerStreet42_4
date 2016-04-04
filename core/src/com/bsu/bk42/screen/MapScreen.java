@@ -1,4 +1,4 @@
-package com.bsu.bk42.com.bsu.bk42.screen;
+package com.bsu.bk42.screen;
 
 import aurelienribon.tweenengine.*;
 import com.badlogic.gdx.Gdx;
@@ -189,6 +189,8 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
 
         for(Image c:clouds)
             mapgroup.addActor(c);
+
+//        mapgroup.debugAll();
     }
 
     /**

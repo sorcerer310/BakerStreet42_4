@@ -1,4 +1,4 @@
-package com.bsu.bk42.com.bsu.bk42.screen;
+package com.bsu.bk42.screen;
 
 import aurelienribon.tweenengine.*;
 import aurelienribon.tweenengine.Timeline;
@@ -8,21 +8,18 @@ import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.Telegram;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.SnapshotArray;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.bsu.bk42.ScreenParams;
 import com.bsu.bk42.knife.SwipeKnifeLight;
@@ -36,23 +33,33 @@ import java.lang.reflect.InvocationTargetException;
  * 锁链切割场景,手机上出现夏侯恩身背青釭剑，夺取青釭剑划断屏幕上的两根锁链
  * Created by fengchong on 16/3/3.
  */
-public class ChainScreen extends UGameScreen {
+public class ChainScreen extends UGameScreen implements IPlcCommandListener{
     private SwipeKnifeLight skl;                                            //刀光对象
     private boolean isDrawKnifeLight = false;                               //是否绘制刀光标识
 
     private Texture tx_xiahouen = new Texture("chain/chara.png");
     private Texture tx_sword = new Texture("chain/sword.png");
 
+    private Sound s_appear,s_dead;
+
     private Image img_xiahouen;
     private SwordImage img_sword;
 
     private Group g_root = new Group();
-
     private ChainGroup g_chain;
+
+    private Timeline tl_appear,tl_dead;
+
+    private StateMachine stateMachine;
 //    private Sound sound;
     public ChainScreen(){
         stage = new Stage(new StretchViewport(ScreenParams.screenWidth,ScreenParams.screenHeight));
         this.setFPS(40);
+
+        stateMachine = new DefaultStateMachine<ChainScreen,ChainScreenState>(this,ChainScreenState.GAME_READY);
+
+        s_appear = Gdx.audio.newSound(Gdx.files.internal("chain/appear.ogg"));
+        s_dead = Gdx.audio.newSound(Gdx.files.internal("chain/dead.ogg"));
 //        System.out.println(stage.getWidth());
 //        sound = Gdx.audio.newSound(new FileHandle(""));
         initLayout();
@@ -60,6 +67,8 @@ public class ChainScreen extends UGameScreen {
         initChain();
         initSwipe();
 
+
+//        receivePlcCommand(0);
     }
 
     /**
@@ -119,33 +128,71 @@ public class ChainScreen extends UGameScreen {
     private void initRoleAndSword(){
         //定义人物Image
         img_xiahouen = new Image(tx_xiahouen){
-            private Timeline tl_flee;
+            private Timeline tl_dead;
             {
                 Tween.registerAccessor(Image.class,new ActorAccessor());
             }
-            public void flee(){
-                tl_flee = Timeline.createSequence()
-                        .push(
-                                Tween.to(this, ActorAccessor.POS_XY, 1.0f).target(-1000).ease(Back.IN)
-                        )
+            /**
+             * 夏侯恩死亡
+             */
+            public void dead(){
+                tl_dead = Timeline.createParallel()
                         .push(
                                 Tween.call(new TweenCallback() {
                                     @Override
-                                    public void onEvent(int i, BaseTween<?> baseTween) {
-                                        g_root.addActor(g_chain);
-//                                        g_chain.setZIndex(1);
-//                                        System.out.println("ZIndex:"+g_chain.getZIndex());
-                                        ChainScreen.this.g_chain.dropAllChain();
+                                    public void onEvent(int type, BaseTween<?> source) {
+                                        s_dead.play();
                                     }
                                 })
-                        ).start();
+                        )
+                        .push(
+                                Timeline.createSequence()
+//                                        .pushPause(3.8f)
+                                        .push(Timeline.createSequence()
+                                                        .push(Tween.to(img_xiahouen, ActorAccessor.POS_XY, .03f).target(img_xiahouen.getX() - 5, g_role.getY()))
+                                                        .push(Tween.to(img_xiahouen, ActorAccessor.POS_XY, .03f).target(img_xiahouen.getX() + 5, g_role.getY()))
+                                                        .repeat(10, .0f)
+                                        )
+                                        .push(
+                                                Tween.to(img_xiahouen, ActorAccessor.OPACITY,1.0f).target(.0f)
+                                        )
+                                        .push(
+                                                Tween.call(new TweenCallback() {
+                                                    @Override
+                                                    public void onEvent(int i, BaseTween<?> baseTween) {
+                                                        g_root.addActor(g_chain);
+                //                                        g_chain.setZIndex(1);
+                //                                        System.out.println("ZIndex:"+g_chain.getZIndex());
+                                                        ChainScreen.this.g_chain.dropAllChain();
+                                                    }
+                                                })
+                                        )
+                        )
+                        .start();
+
+//                  逃跑
+//                tl_flee = Timeline.createSequence()
+//                        .push(
+//                                Tween.to(this, ActorAccessor.POS_XY, 1.0f).target(-1000).ease(Back.IN)
+//                        )
+//                        .push(
+//                                Tween.call(new TweenCallback() {
+//                                    @Override
+//                                    public void onEvent(int i, BaseTween<?> baseTween) {
+//                                        g_root.addActor(g_chain);
+////                                        g_chain.setZIndex(1);
+////                                        System.out.println("ZIndex:"+g_chain.getZIndex());
+//                                        ChainScreen.this.g_chain.dropAllChain();
+//                                    }
+//                                })
+//                        ).start();
             }
 
             @Override
             public void act(float delta) {
                 super.act(delta);
-                if(tl_flee!=null)
-                    tl_flee.update(delta);
+                if(tl_dead!=null)
+                    tl_dead.update(delta);
             }
         };
         //定义宝剑Image
@@ -155,7 +202,7 @@ public class ChainScreen extends UGameScreen {
             @Override
             public void onGetSword(SwordImage si) {
                 try {
-                    img_xiahouen.getClass().getMethod("flee").invoke(img_xiahouen);
+                    img_xiahouen.getClass().getMethod("dead").invoke(img_xiahouen);
                     ChainScreen.this.isDrawKnifeLight = true;
                 } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
@@ -168,6 +215,10 @@ public class ChainScreen extends UGameScreen {
         g_role.addActor(img_xiahouen);
         g_role.addActor(img_sword);
 
+        //夏侯恩默认透明图
+        Color gcolor = g_role.getColor();
+        g_role.setColor(gcolor.r,gcolor.g,gcolor.b,.0f);
+
         g_root.addActor(g_role);
     }
 
@@ -175,8 +226,39 @@ public class ChainScreen extends UGameScreen {
      * 出现锁链
      */
     private void initChain(){
-        g_chain = new ChainGroup(g_root.getWidth(),g_root.getHeight());
+        g_chain = new ChainGroup(g_root.getWidth(),g_root.getHeight(),this);
     }
+
+    /**
+     * 夏侯恩出场
+     */
+    private void roleAppear(){
+        tl_appear = Timeline.createParallel()
+                        .push(
+                                Tween.call(new TweenCallback() {
+                                    @Override
+                                    public void onEvent(int type, BaseTween<?> source) {
+                                        s_appear.play();
+                                    }
+                                })
+                        )
+                        .push(
+                                Timeline.createSequence()
+//                                        .push(
+//                                                Tween.to(g_role, ActorAccessor.OPACITY, .1f).target(.0f)
+//                                                        .ease(TweenEquations.easeNone)
+//                                        )
+//                                        .push(
+//                                                Tween.to(g_role, ActorAccessor.OPACITY, .1f).target(1.0f)
+//                                                        .ease(TweenEquations.easeNone)
+//                                        ).repeat(5,0)
+                                        .push(
+                                                Tween.to(g_role, ActorAccessor.OPACITY, 2.0f).target(1.0f)
+                                                        .ease(TweenEquations.easeNone)
+                                        )
+                        ).start();
+    }
+
 
     @Override
     public void render(float delta) {
@@ -185,12 +267,77 @@ public class ChainScreen extends UGameScreen {
             skl.act(delta);
             skl.draw(stage.getBatch(), 1);
         }
+        if(tl_appear!=null)
+            tl_appear.update(delta);
+        if(tl_dead!=null)
+            tl_dead.update(delta);
+
+        stateMachine.update();
     }
 
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
     }
+
+    @Override
+    public void receivePlcCommand(int cmdi) {
+        stateMachine.changeState(ChainScreenState.GAME_RUNNING);
+    }
+
+    /**
+     * 活的锁链场景的状态机
+     * @return
+     */
+    public StateMachine getStateMachine() {
+        return stateMachine;
+    }
+
+    public static enum ChainScreenState implements State<ChainScreen>{
+        GAME_READY{
+            @Override
+            public void enter(ChainScreen entity) {
+                //重设宝剑状态
+                entity.img_sword.resetSword();
+                //夏侯恩的状态应该不用重设，待测试
+
+                //重设锁链组
+                entity.g_chain.resetChainGroup();
+            }
+            @Override
+            public void update(ChainScreen entity) {}
+            @Override
+            public void exit(ChainScreen entity) {}
+            @Override
+            public boolean onMessage(ChainScreen entity, Telegram telegram) {return false;}
+        },
+        GAME_RUNNING{
+            @Override
+            public void enter(ChainScreen entity) {
+                //游戏开始后人物出现
+                entity.roleAppear();
+            }
+            @Override
+            public void update(ChainScreen entity) {}
+            @Override
+            public void exit(ChainScreen entity) {}
+            @Override
+            public boolean onMessage(ChainScreen entity, Telegram telegram) {return false;}
+        },
+        GAME_OVER{
+            @Override
+            public void enter(ChainScreen entity) {
+                //TODO:游戏结束向plc发送命令让锁链断开的操作写在此处
+            }
+            @Override
+            public void update(ChainScreen entity) {}
+            @Override
+            public void exit(ChainScreen entity) {}
+            @Override
+            public boolean onMessage(ChainScreen entity, Telegram telegram) {return false;}
+        }};
+
+
 }
 
 /**
@@ -225,6 +372,15 @@ class SwordImage extends Image implements Disposable {
 
     }
 
+    /**
+     * 重设宝剑状态
+     */
+    public void resetSword(){
+        this.setPosition(0,0);
+        this.setOrigin(Align.center);
+        this.rotateBy(-30);
+        this.setScale(1.0f);
+    }
 
     private float shakeDuration = .02f;                                                                                 //抖动持续时间
     /**
@@ -337,10 +493,11 @@ class ChainGroup extends Group{
     private Timeline tl_dropsequence;
     private int remainChainCount ;
 
+    private ChainScreen screen;
     private StateMachine stateMachine;
-    public ChainGroup(float width,float height) {
+    public ChainGroup(float width,float height,ChainScreen s) {
         this.setSize(width, height);
-
+        screen = s;
         stateMachine = new DefaultStateMachine(this,CutState.NORMAL_STATE);
 
         //四条锁链
@@ -456,17 +613,27 @@ class ChainGroup extends Group{
     public void destroyChain(){
         remainChainCount--;
         if(remainChainCount==0)
-            gameOver();
+            screen.getStateMachine().changeState(ChainScreen.ChainScreenState.GAME_OVER);
     }
 
     /**
      * 游戏结束
      */
-    private void gameOver(){
-        System.out.println("-------------game over");
+//    private void gameOver(){
+//        System.out.println("-------------game over");
+//    }
+
+    /**
+     * 重设锁链组
+     */
+    public void resetChainGroup(){
+        //重设4条锁链
+        for(ChainActor chain:chains){
+            chain.resetChain();
+        }
+        //设置剩余锁链数为初始
+        remainChainCount = chains.size;
     }
-
-
     /**
      * 获得该类的状态机
      * @return  返回当前类的状态机对象
@@ -481,17 +648,10 @@ class ChainGroup extends Group{
             public void enter(ChainGroup entity) {
 
             }
-
             @Override
-            public void update(ChainGroup entity) {
-
-            }
-
+            public void update(ChainGroup entity) {}
             @Override
-            public void exit(ChainGroup entity) {
-
-            }
-
+            public void exit(ChainGroup entity) {}
             @Override
             public boolean onMessage(ChainGroup entity, Telegram telegram) {
                 return false;
@@ -585,7 +745,7 @@ class ChainActor extends Group {
 //        System.out.println("cut:"+this.getName());
         life--;
         Color lcolor = img_chainlight.getColor();
-        img_chainlight.setColor(lcolor.r,lcolor.g,lcolor.b,1.0f);
+        img_chainlight.setColor(lcolor.r, lcolor.g, lcolor.b,1.0f);
         tl_cut = Timeline.createSequence()
                 .push(
                         Timeline.createParallel()
@@ -651,6 +811,17 @@ class ChainActor extends Group {
     }
 
     /**
+     * 重设锁链状态
+     */
+    public void resetChain(){
+        life = 3;
+        this.setPosition(this.getX(),this.getHeight());
+        Color ccolor = this.getColor();
+        this.setColor(ccolor.r,ccolor.g,ccolor.b,1.0f);
+        stateMachine.changeState(ChainState.STATE_NORMAL);
+    }
+
+    /**
      * 获得状态机对象
      * @return
      */
@@ -695,17 +866,14 @@ class ChainActor extends Group {
             public void enter(ChainActor entity) {
                 entity.destroyChain();
             }
-
             @Override
             public void update(ChainActor entity) {
 
             }
-
             @Override
             public void exit(ChainActor entity) {
 
             }
-
             @Override
             public boolean onMessage(ChainActor entity, Telegram telegram) {
                 return false;

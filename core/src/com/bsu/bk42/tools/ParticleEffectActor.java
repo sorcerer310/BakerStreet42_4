@@ -1,5 +1,6 @@
 package com.bsu.bk42.tools;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -37,6 +38,11 @@ public class ParticleEffectActor extends Actor implements Disposable {
         particle.scaleEffect(scaleFactor);
     }
 
+    public void startEffect() {
+        isDraw = true;
+        particle.start();
+    }
+
     /**
      * 立即让粒子停止绘制消失
      */
@@ -53,8 +59,9 @@ public class ParticleEffectActor extends Actor implements Disposable {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        if(isDraw)
-            particle.draw(batch,parentAlpha);
+        if(isDraw) {
+            particle.draw(batch, Gdx.graphics.getDeltaTime());
+        }
     }
 
     @Override
@@ -62,7 +69,6 @@ public class ParticleEffectActor extends Actor implements Disposable {
         super.act(delta);
         particle.setPosition(this.getX(),this.getY());
         particle.update(delta);
-        particle.start();
     }
 
     @Override

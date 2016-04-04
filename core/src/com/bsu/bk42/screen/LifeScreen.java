@@ -1,4 +1,4 @@
-package com.bsu.bk42.com.bsu.bk42.screen;
+package com.bsu.bk42.screen;
 
 import aurelienribon.tweenengine.*;
 import com.badlogic.gdx.Gdx;
@@ -21,7 +21,7 @@ import com.ugame.gdx.tween.accessor.ActorAccessor;
  * 七星续命灯场景，展示星空7盏灯，每过一段时间灯会熄灭一盏
  * Created by fengchong on 16/3/7.
  */
-public class LifeScreen extends UGameScreen{
+public class LifeScreen extends UGameScreen implements IPlcCommandListener{
     private Texture tx_bg = null;
     private Texture tx_star = null;
 
@@ -31,7 +31,8 @@ public class LifeScreen extends UGameScreen{
     private Group group = new Group();
 
     public LifeScreen(){
-        this.stage = new Stage(new StretchViewport(ScreenParams.screenWidth,ScreenParams.screenHeight));
+        this.stage = new Stage(new StretchViewport(720,1280));
+        ScreenParams.initScreenParams(720,1280);
         this.setFPS(40);
 
         tx_bg = new Texture(Gdx.files.internal("life/bg_life.jpg"));
@@ -46,7 +47,6 @@ public class LifeScreen extends UGameScreen{
             }
         });
 
-        Gdx.input.setInputProcessor(stage);
 
         initActor();
         initLayout();
@@ -115,6 +115,30 @@ public class LifeScreen extends UGameScreen{
             stars.get(i).disappear();
     }
 
+    @Override
+    public void show() {
+        super.show();
+        Gdx.input.setInputProcessor(stage);
+    }
+
+    @Override
+    public void receivePlcCommand(int cmdi) {
+        //设置显示剩余的生命,cmdi为当前灭的灯的索引
+        for(int i=0;i<=stars.size+(cmdi-stars.size);i++)
+            stars.get(i).setVisible(false);
+//            stars.get(i).disappear();
+
+    }
+
+    /**
+     * 重设星星界面
+     */
+    public void resetLifeScreen(){
+        //重新让星星出现
+        for(Star star:stars){
+            star.appear();
+        }
+    }
 }
 
 /**
@@ -129,7 +153,7 @@ class Star extends Image implements Disposable {
         tx = ptx;
         this.setSize(tx.getWidth(), tx.getHeight());
         this.setOrigin(Align.center);
-        Tween.registerAccessor(Image.class,new ActorAccessor());
+        Tween.registerAccessor(Image.class, new ActorAccessor());
         initTween();
     }
 
@@ -144,7 +168,7 @@ class Star extends Image implements Disposable {
         float delay = MathUtils.random(.5f,.9f);
         float minval = MathUtils.random(.4f,.6f);
 //        minval = 1.0f;
-        this.setColor(color.r,color.g,color.b,1.0f);
+        this.setColor(color.r, color.g, color.b,1.0f);
 
         tl_idle = Timeline.createSequence()
                 .push(
@@ -165,47 +189,51 @@ class Star extends Image implements Disposable {
                                                 .ease(TweenEquations.easeNone)
                                 )
                 ).repeat(-1,0).start();
-        tl_dis = Tween.to(this,ActorAccessor.OPACITY,.6f).target(.0f)
-                .ease(TweenEquations.easeNone).setCallback(new TweenCallback() {
-                    @Override
-                    public void onEvent(int i, BaseTween<?> baseTween) {
-                        System.out.println("tl_dis complete");
-                    }
-                });
-        tl_app = Tween.to(this,ActorAccessor.OPACITY,.6f).target(1.5f)
-                .ease(TweenEquations.easeNone).setCallback(new TweenCallback() {
-                    @Override
-                    public void onEvent(int i, BaseTween<?> baseTween) {
-                        System.out.println("tl_app complete");
-                    }
-                });
+
+
 
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
-        if(tl_idle!=null)
+        if(tl_idle!=null )
             tl_idle.update(delta);
-        if(tl_dis!=null)
-            tl_dis.update(delta);
-        if(tl_app!=null)
-            tl_app.update(delta);
+//        if(tl_dis!=null)
+//            tl_dis.update(delta);
+//        if(tl_app!=null)
+//            tl_app.update(delta);
     }
 
     /**
      * 星星消失函数
      */
     public void disappear(){
-        tl_dis.start();
+//        tl_app.kill();
+        tl_idle.kill();
+        tl_dis = Tween.to(this,ActorAccessor.OPACITY,.6f).target(.0f)
+                .ease(TweenEquations.easeNone).setCallback(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        System.out.println("tl_dis complete");
+                    }
+                }).start();
     }
 
     /**
      * 星星出现函数
      */
     public void appear(){
-        tl_app.start();
+        tl_app = Tween.to(this,ActorAccessor.OPACITY,.6f).target(1.5f)
+                .ease(TweenEquations.easeNone).setCallback(new TweenCallback() {
+                    @Override
+                    public void onEvent(int i, BaseTween<?> baseTween) {
+                        System.out.println("tl_app complete");
+                    }
+                }).start();
     }
+
+
 
     @Override
     public void dispose() {

@@ -1,6 +1,8 @@
 package com.bsu.bk42;
 
 import com.badlogic.gdx.Game;
+import com.bsu.bk42.screen.*;
+import com.bsu.bk42.tools.PlcCommHelper;
 //import com.bsu.bk42.screen.FireScreen;
 //import com.bsu.bk42.screen.FollowUpScreen;
 //import com.bsu.bk42.screen.StarScreen;
@@ -9,29 +11,32 @@ public class BakerStreet42 extends Game {
 //	SpriteBatch batch;
 //	Texture img;
 	public static final int MAPSCREEN = 0;																				//地图场景的默认索引
-	public static final int STARSCREEN = 1;																				//星星场景的默认索引
-	public static final int FIRESCREEN = 2;																				//放火场景的默认索引
-	public static final int FOLLOWUP = 3;																				//追击场景的默认索引
+	public static final int LIFESCREEN = 1;																				//续命场景的默认索引
+	public static final int CUTSCREEN = 2;																				//刀伤场景的默认索引
+	public static final int CHAINSCREEN = 3;																			//锁链场景的默认索引
+	public static final int PUZZLESCREEN = 4;																			//四象场景的默认索引
 
 	public static MapScreen ms = null;																					//地图场景
+	public static LifeScreen ls = null;																					//续命场景
+	public static CutScreen cuts = null;																				//刀伤场景
 	public static ChainScreen cs = null;																				//锁链场景
-//	public static StarScreen ss = null;																					//星星场景
-//	public static FireScreen fs = null;																					//放火场景
-//	public static FollowUpScreen fus = null;																			//追击场景
+	public static PuzzleScreen ps = null;																				//四象场景
 
 	@Override
 	public void create () {
+//		ScreenParams.initScreenParams(this.getStage().getWidth(), this.getStage().getHeight());
+		ScreenParams.initScreenParams(720,1280);
 		if(ms==null)
 			ms = new MapScreen();
-//		if(ss==null)
-//			ss = new StarScreen();
-//		if(fs==null)
-//			fs = new FireScreen();
-//		if(fus==null)
-//			fus = new FollowUpScreen();
-//		this.setScreen(ms);
-		cs= new ChainScreen();
-		this.setScreen(cs);
+		if(ls==null)
+			ls = new LifeScreen();
+		if(cuts == null)
+			cuts = new CutScreen();
+		if(cs==null)
+			cs= new ChainScreen();
+		if(ps==null)
+			ps = new PuzzleScreen();
+		this.setScreen(ms);
 	}
 
 	/**
@@ -43,15 +48,18 @@ public class BakerStreet42 extends Game {
 			case MAPSCREEN:
 				this.setScreen(ms);
 				break;
-//			case STARSCREEN:
-//				this.setScreen(ss);
-//				break;
-//			case FIRESCREEN:
-//				this.setScreen(fs);
-//				break;
-//			case FOLLOWUP:
-//				this.setScreen(fus);
-//				break;
+			case LIFESCREEN:
+				this.setScreen(ls);
+				break;
+			case CUTSCREEN:
+				this.setScreen(cuts);
+				break;
+			case CHAINSCREEN:
+				this.setScreen(cs);
+				break;
+			case PUZZLESCREEN:
+				this.setScreen(ps);
+				break;
 		}
 	}
 
@@ -60,42 +68,62 @@ public class BakerStreet42 extends Game {
 	 * @param id	地图当前显示到的机关索引
 	 */
 	public void setMapCurrIndex(String id){
-		//0:初始.1:星盘.2:乌龟.3:插旗.4:军令.5:守关3处完成.6:追击.7:守关4处放火.8:铁锁连环.9:船舱门关 10:草船借箭.11:擂鼓助威.
-		//12:宝剑咒语箱开.13:借东风.14:放火.15:选择大路追击.16:选择华容道追击
+		//0:初始.1:大厅灯开启，朱雀门开，朱雀房间1迷雾消失.2:朱雀通道门开，朱雀通道迷雾散.3:朱雀计时开始，朱雀房间2迷雾开.
+		//4:象棋，朱雀武器，朱雀通关门.5:白虎门，白虎房间1迷雾散开.6:刀伤，车零件1，.7:锁链，车零件.8:虎战车，白虎宫房间2迷雾.
+		//9:白虎宫计时器 10:白虎宫车轮、阿斗、白虎宫武器.11:玄武门、玄武房间1迷雾消失.
+		//12:分贝仪1触发.13:分贝仪2触发.14:分贝仪3触发，吊桥起，玄武宫房间2迷雾散开.15:酒坛盒.16:武器架，青龙门，青龙房间1迷雾散
+		//17:5令牌开锁.18:地图，青龙门，青龙房间2迷雾散开.19:对联青龙武器.20:青龙出口小门.21:祭坛
 		int i = Integer.parseInt(id);
-		ms.plcCommand(i);
+		ms.receivePlcCommand(i);
 	}
 
 	/**
-	 * 设置当前放火界面为哪个界面
-	 * @param id	1为博望坡,2为铁锁连环
+	 * 设置剩余生命
+	 * @param id 	当前灭的灯的索引
 	 */
-	public void setFireCurrIndex(String id){
-		//0:博望坡,1:铁锁连环
-		int i = Integer.parseInt(id);
-//		fs.plcCommand(i);
+	public void setLeftLife(String id){
+		int i=Integer.parseInt(id);
+		ls.receivePlcCommand(i);
 	}
 
 	/**
-	 * 设置追击界面可用
+	 * 设置淳于导出场
+	 * @param id	接收plc命令的数据
 	 */
-//	public void setFollowupEnable(){
-//		fus.setFollowUpEnable();
-//	}
+	public void setCutStart(String id){
+		cuts.receivePlcCommand(Integer.parseInt(id));
+	}
+
+	/**
+	 * 设置锁链界面开始
+	 * @param id
+	 */
+	public void setChainStart(String id){
+		cs.receivePlcCommand(Integer.parseInt(id));
+	}
+
+	/**
+	 * 解谜界面开始
+	 * @param id
+	 */
+	public void setPuzzleStart(String id){
+		ps.receivePlcCommand(Integer.parseInt(id));
+	}
 
 	public MapScreen getMapScreen() {return ms;}
-//	public StarScreen getStarScreen() {return ss;}
-//	public FireScreen getFireScreen() {return fs;}
-//	public FollowUpScreen getFollorUpScreen() {return fus;}
+	public LifeScreen getLifeScreen() {return ls;}
+	public CutScreen getCutScreen() {return cuts;}
+	public ChainScreen getChainScreen() {return cs;}
+	public PuzzleScreen getPuzzleScreen() {return ps;}
 	//重置服务器状态
 	public void resetServer(){
 		PlcCommHelper pch = PlcCommHelper.getInstance();
 		pch.simpleGet("/plc_init_serial");
-		pch.setListener(new PlcCommHelper.ResponseListener() {
-			@Override
-			public void getResponse(String string) {
-				System.out.println(string);
-			}
-		});
+//		pch.setListener(new PlcCommHelper.ResponseListener() {
+//			@Override
+//			public void getResponse(String string) {
+//				System.out.println(string);
+//			}
+//		});
 	}
 }

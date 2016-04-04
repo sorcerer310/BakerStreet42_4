@@ -99,7 +99,6 @@ public class SwipeKnifeLight extends Actor implements Disposable {
 	
 	@Override
 	public void act(float delta) {
-		// TODO Auto-generated method stub
 		super.act(delta);
 		for(ParticlePoolHelper pph:pphs)
 			pph.act(delta);

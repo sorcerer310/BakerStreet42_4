@@ -1,4 +1,4 @@
-package com.bsu.bk42.com.bsu.bk42.screen;
+package com.bsu.bk42.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,13 +16,16 @@ public class ScreenFrame {
         return instance;
     }
 
-    private Texture tx_bg_top,tx_bg_bottom = null;
-    private Image img_bg_top,img_bg_bottom = null;
+    private Texture tx_bg_top,tx_bg_bottom,tx_bg = null;
+    private Image img_bg_top,img_bg_bottom,img_bg = null;
+
     private ScreenFrame(){
         tx_bg_top = new Texture(Gdx.files.internal("bg-1.jpg"));
         tx_bg_bottom = new Texture(Gdx.files.internal("bg-2.jpg"));
-        img_bg_top = new Image(tx_bg_top);
-        img_bg_bottom = new Image(tx_bg_bottom);
+        tx_bg = new Texture(Gdx.files.internal("bg.jpg"));
+//        img_bg_top = new Image(tx_bg_top);
+//        img_bg_bottom = new Image(tx_bg_bottom);
+//        img_bg = new Image(tx_bg);
     }
 
     /**
@@ -30,14 +33,24 @@ public class ScreenFrame {
      * @return
      */
     public Image getImgTop() {
-        return img_bg_top;
-    }
+        img_bg_top = new Image(tx_bg_top);
+        return img_bg_top; }
 
     /**
      * 获得下边框的Image对象
      * @return
      */
     public Image getImgBottom() {
+        img_bg_bottom = new Image(tx_bg_bottom);
         return img_bg_bottom;
     }
+
+    /**
+     * 获得监狱的大背景
+     * @return
+     */
+    public Image getImgBg(){
+        img_bg = new Image(tx_bg);
+        return img_bg;}
 }
+

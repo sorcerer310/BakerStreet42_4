@@ -1,4 +1,4 @@
-package com.bsu.bk42;
+package com.bsu.bk42.tools;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
