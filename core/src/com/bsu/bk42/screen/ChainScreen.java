@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.bsu.bk42.ScreenParams;
 import com.bsu.bk42.knife.SwipeKnifeLight;
 import com.bsu.bk42.knife.SwipeKnifeManager;
+import com.bsu.bk42.tools.PlcCommHelper;
 import com.ugame.gdx.tools.UGameScreen;
 import com.ugame.gdx.tween.accessor.ActorAccessor;
 
@@ -328,6 +329,7 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
             @Override
             public void enter(ChainScreen entity) {
                 //TODO:游戏结束向plc发送命令让锁链断开的操作写在此处
+                PlcCommHelper.getInstance().simpleGet("/plc_send_serial?plccmd=chain");
             }
             @Override
             public void update(ChainScreen entity) {}

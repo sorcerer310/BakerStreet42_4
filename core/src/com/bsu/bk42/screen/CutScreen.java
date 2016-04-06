@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.bsu.bk42.ScreenParams;
+import com.bsu.bk42.tools.PlcCommHelper;
 import com.ugame.gdx.tools.UGameScreen;
 import com.ugame.gdx.tween.accessor.ActorAccessor;
 
@@ -181,6 +182,15 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
                             .push(
                                     Tween.to(g_role, ActorAccessor.OPACITY,1.0f).target(.0f)
                             )
+                                //10秒后启动锁链功能
+                                .pushPause(10000)
+                            .push(Tween.call(new TweenCallback() {
+                                @Override
+                                public void onEvent(int type, BaseTween<?> source) {
+                                    //向服务器发送chain命令，启动锁链界面
+                                    PlcCommHelper.getInstance().simpleGet("/notification.do?action=send&broadcast=A&username=&title=title&message=message&uri=chain%3A0");
+                                }
+                            }))
                 )
                 .start();
     }

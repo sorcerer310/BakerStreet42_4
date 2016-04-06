@@ -61,32 +61,26 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
 
         //PLC命令调试代码
         receivePlcCommand(0);
-//        receivePlcCommand(1);
-//        receivePlcCommand(2);
-//        receivePlcCommand(3);
-//        receivePlcCommand(4);
-//        receivePlcCommand(5);
-//        receivePlcCommand(6);
-//        receivePlcCommand(7);
-//        receivePlcCommand(8);
-//        receivePlcCommand(9);
-//        receivePlcCommand(10);
-//        receivePlcCommand(11);
-//        receivePlcCommand(12);
-//        receivePlcCommand(13);
-//        receivePlcCommand(14);
-//        receivePlcCommand(15);
-//        receivePlcCommand(16);
+        receivePlcCommand(1);
+        receivePlcCommand(2);
+        receivePlcCommand(3);
+        receivePlcCommand(4);
+        receivePlcCommand(5);
+        receivePlcCommand(6);
+        receivePlcCommand(7);
+        receivePlcCommand(8);
+        receivePlcCommand(9);
+        receivePlcCommand(10);
+        receivePlcCommand(11);
+        receivePlcCommand(12);
+        receivePlcCommand(13);
+        receivePlcCommand(14);
+        receivePlcCommand(15);
+        receivePlcCommand(16);
+        receivePlcCommand(17);
+        receivePlcCommand(18);
+        receivePlcCommand(19);
 
-        //屏幕触摸调试代码
-        stage.addListener(new InputListener(){
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                System.out.println("x:"+x+" y:"+y);
-                return super.touchDown(event, x, y, pointer, button);
-            }
-        });
     }
 
     /**
@@ -155,14 +149,14 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
         mapgroup.setBounds(0, 0, tx_map.getWidth(), tx_map.getHeight());
         mapgroup.addActor(map);
         marks = makeMarks(new int[][]{
-                {215, 645}, {462,407},{265,95},                                 //大厅七星灯,朱雀门,朱雀通道门
-                {355, 125}, {345, 250},{125,260},{400,378},                     //朱雀计时器,象棋,朱雀武器,朱雀通关门
-                {140, 800}, {45, 743}, {40, 520}, {305, 495}, {590, 670},       //白虎门，刀伤，车零件1，锁链，车零件2
-                {347, 950}, {350, 986},{100, 1206},{210, 1208},{119, 965},{229, 964},{33, 993},{250, 913},        //虎战车，白虎计时器，4车轮，阿斗，白虎武器
-                {354, 632}, {312, 477},{382, 477},{483, 477},{364, 814},        //玄武门，分贝仪1，分贝仪2，分贝仪3，吊桥
-                {685, 500}, {545, 490},                                         //酒坛,武器架
-                {379,366},{364, 439},{263,75},                                  //5令牌开锁,地图开门,青龙门
-                {170, 22},{226,442},{153,448}                                   //对联，青龙武器，青龙出口小门
+                {740, 260}, {634,412},{600,100},                                 //大厅七星灯,朱雀门,朱雀通道门
+                {370, 125}, {365, 250},{135,260},{410,378},                     //朱雀计时器,象棋,朱雀武器,朱雀通关门
+                {637, 800}, {45, 743}, {40, 520}, {305, 495}, {610, 670},       //白虎门，刀伤，车零件1，锁链，车零件2
+                {347, 960}, {350, 996},{100, 1216},{210, 1218},{119, 975},{229, 974},{43, 993},{250, 913},        //虎战车，白虎计时器，4车轮，阿斗，白虎武器
+                {840, 630}, {1080, 477},{1180, 477},{1280, 477},{1128, 816},        //玄武门，分贝仪1，分贝仪2，分贝仪3，吊桥
+                {1425, 500}, {1290, 490},                                         //酒坛,武器架
+                {1022,366},{1140, 439},{1000,75},                                  //5令牌开锁,地图开门,青龙门
+                {915, 22},{969,442},{896,448}                                   //对联，青龙武器，青龙出口小门
         });
         for(Mark m:marks)
             mapgroup.addActor(m);
@@ -175,6 +169,17 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
 //                System.out.println("x:"+i*300+"  y:"+j*200);
             }
         }
+
+        //屏幕触摸调试代码
+        mapgroup.addListener(new InputListener() {
+
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println("x:" + x + " y:" + y);
+                return super.touchDown(event, x, y, pointer, button);
+            }
+        });
+
         clouds = makeClouds(cpoints);
 //        dispareClouds(0);
 //        dispareClouds(1);
@@ -360,15 +365,16 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
      *
      *
      *  标记:
-     *  {215, 645}, {462,407},{265,95},                                 //大厅七星灯,朱雀门,朱雀通道门
-        {355, 125}, {345, 250},{125,260},{400,378},                     //朱雀计时器,象棋,朱雀武器,朱雀通关门
-        7{140, 800}, {45, 743}, {40, 520}, {305, 495}, {590, 670},       //白虎门，刀伤，车零件1，锁链，车零件2
-        12{347, 950}, {350, 986},{100, 1206},{210, 1208},{119, 965},{229, 964},{33, 993},{250, 913},        //虎战车，白虎计时器，4车轮，阿斗，白虎武器
-        20{354, 632}, {312, 477},{382, 477},{483, 477},{364, 814},        //玄武门，分贝仪1，分贝仪2，分贝仪3，吊桥
-        25{685, 500}, {545, 490},{615,445}                                //酒坛,武器架,青龙门
-        28{379,366},{364, 439},{263,75},                                  //5令牌开锁,地图，青龙门
-        31{170, 22},{226,442},{153,448}                                   //对联，青龙武器，青龙出口小门
-        34{305,900}                                                       //祭坛
+     *  {215, 645}, {462,407},{265,95},                                 //大厅七星灯W5.01,朱雀门102.00,朱雀通道门102.05
+        {355, 125}, {345, 250},{125,260},{400,378},                     //朱雀计时器107.01,象棋0.01,朱雀武器102.07,朱雀通关门100.06
+        7{140, 800}, {45, 743}, {40, 520}, {305, 495}, {590, 670},       //白虎门102.01，刀伤，车零件1 103.00，锁链，车零件2 103.02
+        12{347, 950}, {350, 986},{100, 1206},{210, 1208},{119, 965},{229, 964},{33, 993},{250, 913},
+                                                                          //虎战车100.02，白虎计时器107.02，4车轮0.11，阿斗0.10，白虎武器103.05
+        20{354, 632}, {312, 477},{382, 477},{483, 477},{364, 814},        //玄武门102.02，分贝仪1 107.06，分贝仪2 107.05，分贝仪3 107.07，吊桥101.07
+        25{-1,-1},{685, 500}, {545, 490},{615,445}                        //玄武计时器107.03 ,酒坛1.07,武器架104.00,青龙门103.06
+        29{379,366},{364, 439},{263,75},                                  //5令牌开锁1.09,地图104.06，青龙门104.02
+        32{170, 22},{-1,-1},{226,442}                                     //对联,青龙计时器107.04,青龙武器106.03
+        35{305,900}                                                       //祭坛W5.05
         消失云彩:
         0:大厅迷雾消失.1:朱雀宫房间1迷雾消失 2:朱雀宫通道迷雾消失 3:朱雀宫房间2迷雾消失 4:白虎宫房间1迷雾消失
         5:白虎宫房间2迷雾消失 6:玄武宫房间1迷雾消失 7:玄武宫房间2迷雾消失 8:青龙宫房间1迷雾消失 9:青龙宫房间2迷雾消失
@@ -377,25 +383,25 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
     public void receivePlcCommand(int cmdi) {
         System.out.println("==================:" + cmdi);
         switch(cmdi){
-            case 0:             //初始
+            case 0:                 //初始
                 dispareClouds(0);                                                                                       //大厅迷雾消失
                 moveMap(.55f,1.0f);
                 break;
-            case 1:             //大厅灯开启，朱雀门开，朱雀房间1迷雾消失
-                appearMark(0);              //七星灯标记
-                appearMark(1);              //朱雀门标记
+            case 1:                 //大厅灯开启W5.01，朱雀门开102.00，朱雀房间1迷雾消失
+                appearMark(0);      //七星灯标记
+                appearMark(1);      //朱雀门标记
                 //朱雀房间1迷雾消失
                 dispareClouds(1);
                 //移动地图焦点
                 moveMap(.2f,1.0f);
                 break;
-            case 2:                 //朱雀通道门开，朱雀通道迷雾散开
+            case 2:                 //朱雀通道门开102.05，朱雀通道迷雾散开
                 appearMark(2);      //朱雀通道门
                 dispareClouds(2);   //朱雀通道迷雾
                 //移动地图焦点
                 moveMap(.0f,.0f);
                 break;
-            case 3:                 //计时器开始，朱雀房间2迷雾散开
+            case 3:                 //朱雀计时器开始107.01，朱雀房间2迷雾散开
                 //计时器标记
                 appearMark(3);
                 //朱雀房间2迷雾散开
@@ -403,7 +409,7 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
                 //移动地图焦点
                 moveMap(.0f,.0f);
                 break;
-            case 4:                 //象棋，朱雀武器，朱雀通关门
+            case 4:                 //象棋0.01，朱雀武器102.07，朱雀通关门100.06
                 //象棋
                 appearMark(4);
                 //朱雀武器
@@ -411,7 +417,7 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
                 //朱雀通关门
                 appearMark(6);
                 break;
-            case 5:                 //白虎门，白虎房间1迷雾散开，
+            case 5:                 //白虎门102.01，白虎房间1迷雾散开，
                 //白虎门
                 appearMark(7);
                 //白虎房间1迷雾散开
@@ -419,19 +425,19 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
                 //移动地图焦点
 //                moveMap(.0f,1.0f);
                 break;
-            case 6:             //刀伤、车零件1，当刀伤机关解开后触发
+            case 6:             //刀伤、车零件1 103.00，当刀伤机关解开后触发
                 //刀伤
                 appearMark(8);
                 //车零件1
                 appearMark(9);
                 break;
-            case 7:             //锁链、车零件2，当锁链机关解开后触发
+            case 7:             //锁链、车零件2 103.02，当锁链机关解开后触发
                 //锁链
                 appearMark(10);
                 //车零件2
                 appearMark(11);
                 break;
-            case 8:             //虎战车、白虎宫房间2迷雾
+            case 8:             //虎战车100.02、白虎宫房间2迷雾
                 //虎战车
                 appearMark(12);
                 //船舱云消失
@@ -439,13 +445,13 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
                 //移动焦点
 //                moveMap(.0f,.1f);
                 break;
-            case 9:             //白虎宫计时器
+            case 9:             //白虎宫计时器107.02
                 //计时器
                 appearMark(13);
                 //移动焦点
 //                moveMap(.3f,.0f);
                 break;
-            case 10:            //白虎宫车轮、阿斗、白虎宫武器
+            case 10:            //白虎宫车轮0.11、阿斗0.10、白虎宫武器103.05
                 //4个车轮
                 appearMark(17);appearMark(14);appearMark(15);appearMark(16);
                 //阿斗
@@ -455,21 +461,21 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
                 //移动焦点
 //                moveMap(.45f, .0f);
                 break;
-            case 11:            //玄武门、玄武房间1迷雾消失
+            case 11:            //玄武门102.02、玄武房间1迷雾消失
                 //玄武门
                 appearMark(20);
                 //玄武房间1迷雾消失
                 dispareClouds(6);
                 moveMap(1.0f,.0f);
                 break;
-            case 12:            //分贝仪1触发
+            case 12:            //分贝仪1触发107.06
                 appearMark(21);
 //                moveMap(.0f,.0f);
                 break;
-            case 13:            //分贝仪2触发
+            case 13:            //分贝仪2触发107.05
                 appearMark(22);
                 break;
-            case 14:            //分贝仪3触发，吊桥起，玄武宫房间2迷雾散开
+            case 14:            //分贝仪3触发107.07，吊桥起101.07，玄武宫房间2迷雾散开
                 //分贝仪3
                 appearMark(23);
                 //吊桥起
@@ -477,30 +483,31 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
                 //玄武宫房间2迷雾散
                 dispareClouds(7);
                 break;
-            case 15:            //酒坛盒
-                //酒坛盒子
+            case 15:            //玄武计时器107.03,酒坛盒1.07
+                //玄武计时器
                 appearMark(25);
+                //酒坛盒子
+                appearMark(26);
                 break;
-            case 16:                //武器架、青龙门，青龙房间1迷雾散开
-                appearMark(26);appearMark(27);
+            case 16:                //武器架104.00、青龙门103.06，青龙房间1迷雾散开
+                appearMark(27);appearMark(28);
                 dispareClouds(8);
                 break;
-            case 17:                //5令牌开锁
-                appearMark(28);
-                break;
-            case 18:                //地图,青龙门,青龙房间2迷雾散开
+            case 17:                //5令牌开锁1.09
                 appearMark(29);
+                break;
+            case 18:                //地图104.06,青龙门104.02,青龙房间2迷雾散开
                 appearMark(30);
+                appearMark(31);
                 dispareClouds(9);
                 break;
-            case 19:                //对联，青龙武器
-                appearMark(31);appearMark(32);
+            case 19:                //对联，青龙计时器107.04
+                appearMark(32);appearMark(33);
                 break;
-            case 20:                //青龙出口小门
-                appearMark(33);
-                break;
-            case 21:                //祭坛
+            case 20:                //青龙武器106.03
                 appearMark(34);
+            case 21:                //祭坛W5.05
+                appearMark(35);
                 break;
             default:
                 break;

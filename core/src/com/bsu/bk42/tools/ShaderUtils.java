@@ -13,15 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 public class ShaderUtils {
     public static ShaderProgram s_dimmed = new ShaderProgram(Gdx.files.internal("shader/dimmed.vertex.glsl")
             ,Gdx.files.internal("shader/dimmed.fragment.glsl"));
-    /**
-     * 纹理变灰效果
-     * @return  返回纹理变灰效果的shader
-     */
-//    public static ShaderProgram dimmed(){
-//        ShaderProgram shader = new ShaderProgram(Gdx.files.internal("shader/dimmed.vertex.glsl")
-//                ,Gdx.files.internal("shader/dimmed.fragment.glsl"));
-//        return shader;
-//    }
 
     /**
      * shader效果开始

@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.bsu.bk42.ScreenParams;
 import com.bsu.bk42.tools.ParticleEffectActor;
+import com.bsu.bk42.tools.PlcCommHelper;
 import com.bsu.bk42.tools.ShaderUtils;
 import com.ugame.gdx.tools.UGameScreen;
 
@@ -88,7 +89,7 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
             @Override
             public void draw(Batch batch, float parentAlpha) {
 
-                if (stateMachine.getCurrentState() != PuzzleState.GAME_READY){
+                if (stateMachine.getCurrentState() == PuzzleState.GAME_READY){
                     //开始shader效果
                     ShaderProgram oldShader = ShaderUtils.begin(batch, ShaderUtils.s_dimmed);
                     //正常的绘制代码
@@ -471,6 +472,7 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
             public void enter(PuzzleScreen entity) {
                 Gdx.input.setInputProcessor(null);
                 //TODO:游戏结束后向plc发送命升起四神兽印
+                PlcCommHelper.getInstance().simpleGet("/plc_send_serial?plccmd=sixiangup");
             }
             @Override
             public void update(PuzzleScreen entity) {
