@@ -9,9 +9,11 @@
     <string name="action_resetgame">重置游戏</string>
 
     <string name="main_map">地图</string>
-    <string name="main_star">星盘</string>
-    <string name="main_fire">点火</string>
-    <string name="main_chase">追击</string>
+    <string name="main_life">续命</string>
+    <string name="main_cut">刀伤</string>
+    <string name="main_chain">锁链</string>
+    <string name="main_puzzle">四象</string>
+    <string name="main_msg">消息</string>
 
 
 

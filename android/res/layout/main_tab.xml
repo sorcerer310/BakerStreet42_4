@@ -4,26 +4,22 @@
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
-    
-    <LinearLayout 
+    <LinearLayout
         android:orientation="vertical" 
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent">
-        
-        <FrameLayout 
+        <FrameLayout
             android:id="@android:id/tabcontent" 
             android:layout_width="fill_parent" 
             android:layout_height="0.0dip"
             android:layout_weight="1.0" />
-        
-        <TabWidget 
+        <TabWidget
             android:id="@android:id/tabs" 
             android:visibility="gone" 
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content" 
             android:layout_weight="0.0" />
-
-        <RadioGroup 
+        <RadioGroup
 		android:id="@+id/main_radiogroup"
 		android:gravity="center_vertical"
 		android:layout_gravity="bottom" 
@@ -35,37 +31,37 @@
 		android:layout_height="wrap_content">
 			<RadioButton 
 			    android:id="@+id/main_tab_map"
-			    android:checked="true" 
-			    android:text="@string/main_map"
-			    android:drawableTop="@drawable/tab_map"
+				android:checked="true"
+				android:text="@string/main_map"
+				android:drawableTop="@drawable/tab_map"
 			    android:textColor="@color/tab_text"
+				android:layout_marginTop="8dp"
 			    style="@style/MMTabButton" android:layout_height="wrap_content"/>
-
-
-		 	<RadioButton 
-                android:id="@+id/main_tab_star"
-                android:text="@string/main_star"
-                android:drawableTop="@drawable/tab_star"
+			<!--android:layout_marginTop="8dp"-->
+		 	<RadioButton
+                android:id="@+id/main_tab_life"
+                android:text="@string/main_life"
+                android:drawableTop="@drawable/tab_life"
                 android:textColor="@color/tab_text"
                 style="@style/MMTabButton" android:checked="false"/>
-			
-		 	<RadioButton 
-		 	    android:id="@+id/main_tab_fire"
-		 	    android:text="@string/main_fire"
-		 	    android:drawableTop="@drawable/tab_fire"
+		 	<RadioButton
+		 	    android:id="@+id/main_tab_cut"
+		 	    android:text="@string/main_cut"
+		 	    android:drawableTop="@drawable/tab_cut"
 		 	    android:textColor="@color/tab_text" 
 		 	    style="@style/MMTabButton" android:checked="false"/>
-		 	
-		 	
-		 	<RadioButton 
-		 	    android:id="@+id/main_tab_followup"
-		 	    android:text="@string/main_chase"
-		 	    android:drawableTop="@drawable/tab_followup"
+		 	<RadioButton
+		 	    android:id="@+id/main_tab_chain"
+		 	    android:text="@string/main_chain"
+		 	    android:drawableTop="@drawable/tab_chain"
 		 	    android:textColor="@color/tab_text"
 		 	    style="@style/MMTabButton" android:checked="false"/>
+			<RadioButton
+					android:id="@+id/main_tab_paint"
+					android:text="@string/main_puzzle"
+					android:drawableTop="@drawable/tab_paint"
+					android:textColor="@color/tab_text"
+					style="@style/MMTabButton" android:checked="false"/>
 		</RadioGroup>
-		
-            
     </LinearLayout>
-    
 </TabHost>
