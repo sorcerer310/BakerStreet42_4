@@ -22,6 +22,7 @@ allprojects {
         ashleyVersion = '1.7.0'
         aiVersion = '1.7.0'
         ugamelibVersion = '1.1.2'
+        gdxToolsVersion = '1.8.0'
     }
 
     repositories {
@@ -60,6 +61,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        compile fileTree(dir: 'libs', include: '*.jar')
     }
 }
 
@@ -89,6 +91,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        compile "com.badlogicgames.gdx:gdx-tools:$gdxToolsVersion"
     }
 }
 
