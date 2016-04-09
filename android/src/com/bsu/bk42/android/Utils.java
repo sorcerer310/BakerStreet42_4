@@ -46,15 +46,12 @@ public class Utils {
 	 * 创建一个List的项目
 	 * @param id		项目的id，对应标签离的数据bk42表示店名，lr表示主题名001表示该主题的第几个标签
 	 * @param title		表示该项目播放时的标题
-	 * @param oggp		表示声音文件路径
 	 * @return			返回一个Map<String,Object>类型对象
 	 */
-	public static Map<String,Object> makeListItemData(String id,String title,int oggp,int imgp){
+	public static Map<String,Object> makeListItemData(String id,String title){
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("id", id);							//
-		map.put("title",title);						//			
-		map.put("oggpath", oggp);				//
-		map.put("imgpath", imgp);						//表示播放声音时显示的npc的图片路径
+		map.put("title",title);						//
 		return map;
 	}
 	
@@ -134,6 +131,14 @@ public class Utils {
         InputStream inStream=conn.getInputStream();
         return readInputStream(inStream);
     }
+
+	/**
+	 * 用httpok库实现的模拟post方式发送表单数据
+	 * @throws Exception
+     */
+	public static void sendPostRequestByForm() throws Exception {
+
+	}
     
     /**
      * 从数据流中读取数据

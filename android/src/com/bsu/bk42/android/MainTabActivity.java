@@ -3,10 +3,12 @@ package com.bsu.bk42.android;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TabHost;
 import com.bsu.bk42.BakerStreet42;
+import com.bsu.bk42.android.activity.MsgActivity;
 import org.androidpn.client.Constants;
 import org.androidpn.client.ServiceManager;
 
@@ -71,6 +73,15 @@ public class MainTabActivity extends TabActivity {
                 m_radioGroup.check(R.id.main_tab_paint);
                 //当ss[1]为0时，解谜开始
                 game.setPuzzleStart(ss[1]);
+            }else if(ss[0].equals("msg")){
+                m_radioGroup.check(R.id.main_tab_msg);
+                MsgActivity ma=(MsgActivity)m_tabHost.getCurrentView().getContext();
+                ma.addMsg("testtitle",ss[1]);
+//                Intent nintent = new Intent(this, MsgActivity.class);
+//                nintent.putExtra("msg","message");
+//                this.startActivityForResult(nintent,9999);
+//                View view = m_tabHost.getCurrentTabView();
+//                view.toString();
             }
         }
     }
@@ -114,6 +125,11 @@ public class MainTabActivity extends TabActivity {
                     case R.id.main_tab_paint:
                         m_tabHost.setCurrentTabByTag(Constant.mTextviewArray[4]);
                         game.setScreen(BakerStreet42.PUZZLESCREEN);
+                        break;
+
+                    case R.id.main_tab_msg:
+                        m_tabHost.setCurrentTabByTag(Constant.mTextviewArray[5]);
+
                         break;
                 }
             }

@@ -2,16 +2,18 @@ package com.bsu.bk42.android;
 
 import android.app.Activity;
 import android.content.Intent;
+import com.bsu.bk42.android.activity.MsgActivity;
 
 public class Constant {
 
-	public static String mTextviewArray[] = {"AndroidLauncher", "AndroidLauncher", "AndroidLauncher", "AndroidLauncher","AndroidLauncher"};
+	public static String mTextviewArray[] = {"AndroidLauncher", "AndroidLauncher", "AndroidLauncher", "AndroidLauncher","AndroidLauncher","MsgActivity"};
 	
 	public static Class mTabClassArray[]= {AndroidLauncher.class,
 		AndroidLauncher.class,
 		AndroidLauncher.class,
 		AndroidLauncher.class,
-			AndroidLauncher.class
+			AndroidLauncher.class,
+			MsgActivity.class
 	};
 
 	/**
