@@ -31,11 +31,10 @@
 		android:layout_height="wrap_content">
 			<RadioButton 
 			    android:id="@+id/main_tab_map"
-				android:checked="true"
+				android:checked="false"
 				android:text="@string/main_map"
 				android:drawableTop="@drawable/tab_map"
 			    android:textColor="@color/tab_text"
-				android:layout_marginTop="8dp"
 			    style="@style/MMTabButton" android:layout_height="wrap_content"/>
 			<!--android:layout_marginTop="8dp"-->
 		 	<RadioButton
@@ -62,6 +61,12 @@
 					android:drawableTop="@drawable/tab_paint"
 					android:textColor="@color/tab_text"
 					style="@style/MMTabButton" android:checked="false"/>
+			<RadioButton
+				android:id="@+id/main_tab_msg"
+				android:text="@string/main_msg"
+				android:drawableTop="@drawable/tab_hint"
+				android:textColor="@color/tab_text"
+				style="@style/MMTabButton" android:checked="true"/>
 		</RadioGroup>
     </LinearLayout>
 </TabHost>

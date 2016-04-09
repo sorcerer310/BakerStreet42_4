@@ -10,7 +10,7 @@
     </style>
 
     <style name="tab_item_text_style">
-        <item name="android:textSize">12.0dip</item>
+        <item name="android:textSize">15.0dip</item>
         <item name="android:textColor">@color/tab_text</item>
         <item name="android:ellipsize">marquee</item>
         <item name="android:singleLine">true</item>
