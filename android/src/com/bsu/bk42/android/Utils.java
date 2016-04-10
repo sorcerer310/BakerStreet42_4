@@ -3,6 +3,9 @@ package com.bsu.bk42.android;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -132,12 +135,16 @@ public class Utils {
         return readInputStream(inStream);
     }
 
+	private final static OkHttpClient http = new OkHttpClient();
 	/**
 	 * 用httpok库实现的模拟post方式发送表单数据
 	 * @throws Exception
      */
-	public static void sendPostRequestByForm() throws Exception {
-
+	public static void sendPostRequestByForm(String url, Callback backfun) throws Exception {
+		Request request = new Request.Builder()
+				.url(url)
+				.build();
+		http.newCall(request).enqueue(backfun);
 	}
     
     /**

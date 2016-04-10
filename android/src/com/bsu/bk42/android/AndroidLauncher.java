@@ -4,20 +4,30 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+import android.os.Handler;
+import android.os.Message;
 import android.view.*;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.bsu.bk42.BakerStreet42;
+import com.bsu.bk42.android.activity.MsgActivity;
 import com.bsu.bk42.screen.ChainScreen;
 import com.bsu.bk42.screen.CutScreen;
 import com.bsu.bk42.screen.PuzzleScreen;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 public class AndroidLauncher extends AndroidApplication {
 	private final String PREFERENCES_CLEAR_PASSWORD = "12345";
 	private EditText et;
 	private AlertDialog dlg_rstgame;
+
+	private Handler handler;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -27,6 +37,14 @@ public class AndroidLauncher extends AndroidApplication {
 		initialize(MainTabActivity.game, config);
 		//初始化重置对话框
 		initResetGameDialog();
+
+		handler = new Handler(){
+			@Override
+			public void handleMessage(Message msg) {
+				super.handleMessage(msg);
+				Toast.makeText(AndroidLauncher.this, "重置服务器状态成功:" + msg.getData().getString("retstr"), Toast.LENGTH_SHORT).show();
+			}
+		};
 	}
 
 	@Override
@@ -84,9 +102,26 @@ public class AndroidLauncher extends AndroidApplication {
 							try {
 								//向服务器发送命令重置换服务器各项数据
 
-								byte[] bytes = Utils.sendPostRequestByForm("http://192.168.1.113:8080/pgc2/plc_init_serial", "");
-								String retstr = new String(bytes);
-								Toast.makeText(AndroidLauncher.this, "重置服务器状态成功:" + retstr, Toast.LENGTH_SHORT).show();
+//								byte[] bytes = Utils.sendPostRequestByForm("http://192.168.1.113:8080/pgc2/plc_init_serial", "");
+								Utils.sendPostRequestByForm("http://192.168.1.113:8080/pgc2/plc_init_serial",new Callback(){
+									@Override
+									public void onFailure(Request request, IOException e) {
+
+									}
+
+									@Override
+									public void onResponse(Response response) throws IOException {
+										String retstr = response.body().toString();
+//										Toast.makeText(AndroidLauncher.this, "重置服务器状态成功:" + retstr, Toast.LENGTH_SHORT).show();
+										Message msg = new Message();
+										Bundle bundle = new Bundle();
+										bundle.putString("retstr",retstr);
+										msg.setData(bundle);
+										handler.sendMessage(msg);
+									}
+								});
+//								String retstr = new String(bytes);
+//								Toast.makeText(AndroidLauncher.this, "重置服务器状态成功:" + retstr, Toast.LENGTH_SHORT).show();
 							} catch (Exception e) {
 								Toast.makeText(AndroidLauncher.this, "重置服务器状态失败:"+e.toString(), Toast.LENGTH_SHORT).show();
 							}
@@ -112,6 +147,7 @@ public class AndroidLauncher extends AndroidApplication {
 		MainTabActivity.game.getCutScreen().getStateMachine().changeState(CutScreen.CutScreenState.GAME_READY);
 		MainTabActivity.game.getChainScreen().getStateMachine().changeState(ChainScreen.ChainScreenState.GAME_READY);
 		MainTabActivity.game.getPuzzleScreen().getStateMachine().changeState(PuzzleScreen.PuzzleState.GAME_READY);
-		MainTabActivity.game.resetServer();
+		MsgActivity.clearMsg();														//清除消息界面数据
+//		MainTabActivity.game.resetServer();
 	}
 }

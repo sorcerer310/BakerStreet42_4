@@ -35,6 +35,7 @@
 				android:text="@string/main_map"
 				android:drawableTop="@drawable/tab_map"
 			    android:textColor="@color/tab_text"
+				android:layout_marginTop="4dp"
 			    style="@style/MMTabButton" android:layout_height="wrap_content"/>
 			<!--android:layout_marginTop="8dp"-->
 		 	<RadioButton

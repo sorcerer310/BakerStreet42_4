@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class MsgActivity extends Activity {
     private ListView lv_msg;
-    private List<Map<String,Object>> listdata;
-    private ListViewSimpleAdapter sa;
+    private static List<Map<String,Object>> listdata ;
+    private static ListViewSimpleAdapter sa ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +45,11 @@ public class MsgActivity extends Activity {
     /**
      * 清除所有的消息
      */
-    public void clearMsg(){
-        listdata.clear();
+    public static void clearMsg(){
+        if(listdata!=null)
+            listdata.clear();
+        if(sa!=null)
+            sa.notifyDataSetChanged();;
     }
 
 
@@ -55,8 +58,7 @@ public class MsgActivity extends Activity {
      */
     private void initMessage(){
         if(listdata==null)
-            listdata = new ArrayList<Map<String,Object>>();
-
+            listdata= new ArrayList<Map<String,Object>>();
         lv_msg = (ListView) findViewById(R.id.lv_message);
 
         sa = new ListViewSimpleAdapter(this,listdata,R.layout.listitem

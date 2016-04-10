@@ -14,8 +14,16 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.bsu.bk42.ScreenParams;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import com.ugame.gdx.tools.UGameScreen;
 import com.ugame.gdx.tween.accessor.ActorAccessor;
+
+import java.io.IOException;
+import java.util.HashMap;
+
 
 /**
  * 七星续命灯场景，展示星空7盏灯，每过一段时间灯会熄灭一盏
@@ -50,6 +58,10 @@ public class LifeScreen extends UGameScreen implements IPlcCommandListener{
 
         initActor();
         initLayout();
+
+        //初始化星星索引数据
+        for(int i=0;i<stars.size;i++)
+            hm_life.put(i,"O101.0"+i);
 
     }
 
@@ -118,15 +130,33 @@ public class LifeScreen extends UGameScreen implements IPlcCommandListener{
     @Override
     public void show() {
         super.show();
+        //画面显示时设置输入监视
         Gdx.input.setInputProcessor(stage);
     }
 
+
+    private String requestUrl = "http://192.168.1.113:8080/pgc2/plc_state_query?point=";
+    private HashMap<Integer,String> hm_life = new HashMap<Integer,String>();
+
+    /**
+     * 检索所有星星数据
+     */
+    public void queryStars(){
+        try {
+            //请求plc的生命数据,更新星星的显示
+//            System.out.println("life screen ");
+            for(int i=0;i<stars.size;i++){
+                stars.get(i).queryLifeData(i,requestUrl+hm_life.get(i));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void receivePlcCommand(int cmdi) {
         //设置显示剩余的生命,cmdi为当前灭的灯的索引
-        for(int i=0;i<=stars.size+(cmdi-stars.size);i++)
-            stars.get(i).setVisible(false);
-//            stars.get(i).disappear();
+//        for(int i=0;i<=stars.size+(cmdi-stars.size);i++)
+//            stars.get(i).setVisible(false);
 
     }
 
@@ -232,6 +262,38 @@ class Star extends Image implements Disposable {
                     }
                 }).start();
     }
+
+
+    private final OkHttpClient http = new OkHttpClient();
+    /**
+     * 请求生命数据
+     */
+    public void queryLifeData(int lifeIndex,String url) throws Exception{
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        http.newCall(request).enqueue(new Callback(){
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if(response.isSuccessful()){
+                    String retstr = response.body().string();
+                    //获得返回数据,如果监控的点返回数据为1让对应的星星可见.
+                    //如果返回数据为0,让该星星为不可见
+                    if(retstr.equals("true")){
+                        Star.this.setVisible(true);
+                    }else if(retstr.equals("false")){
+                        Star.this.setVisible(false);
+                    }
+                }
+            }
+        });
+    }
+
 
 
 

@@ -61,27 +61,27 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
 
         //PLC命令调试代码
         receivePlcCommand(0);
-        receivePlcCommand(1);
-        receivePlcCommand(2);
-        receivePlcCommand(3);
-        receivePlcCommand(4);
-        receivePlcCommand(5);
-        receivePlcCommand(6);
-        receivePlcCommand(7);
-        receivePlcCommand(8);
-        receivePlcCommand(9);
-        receivePlcCommand(10);
-        receivePlcCommand(11);
-        receivePlcCommand(12);
-        receivePlcCommand(13);
-        receivePlcCommand(14);
-        receivePlcCommand(15);
-        receivePlcCommand(16);
-        receivePlcCommand(17);
-        receivePlcCommand(18);
-        receivePlcCommand(19);
-        receivePlcCommand(20);
-        receivePlcCommand(21);
+//        receivePlcCommand(1);
+//        receivePlcCommand(2);
+//        receivePlcCommand(3);
+//        receivePlcCommand(4);
+//        receivePlcCommand(5);
+//        receivePlcCommand(6);
+//        receivePlcCommand(7);
+//        receivePlcCommand(8);
+//        receivePlcCommand(9);
+//        receivePlcCommand(10);
+//        receivePlcCommand(11);
+//        receivePlcCommand(12);
+//        receivePlcCommand(13);
+//        receivePlcCommand(14);
+//        receivePlcCommand(15);
+//        receivePlcCommand(16);
+//        receivePlcCommand(17);
+//        receivePlcCommand(18);
+//        receivePlcCommand(19);
+//        receivePlcCommand(20);
+//        receivePlcCommand(21);
 
     }
 
@@ -377,7 +377,7 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
             25{1353,853},{1425, 500}, {1290, 490},{1360,453}                  //玄武计时器107.03 ,酒坛1.07,武器架104.00,青龙门1 103.06
             29{1042,366},{1140, 439},{1020,75},                               //5令牌开锁1.09,地图104.06，青龙门2 104.02
             32{915, 22},{921,427},{973,422}                                   //对联,青龙计时器107.04,青龙武器106.03
-            35{732,785}                                                       //祭坛W5.05
+            35{732,785}                                                       //祭坛105.04
         消失云彩:
         0:大厅迷雾消失.1:朱雀宫房间1迷雾消失 2:朱雀宫通道迷雾消失 3:朱雀宫房间2迷雾消失 4:白虎宫房间1迷雾消失
         5:白虎宫房间2迷雾消失 6:玄武宫房间1迷雾消失 7:玄武宫房间2迷雾消失 8:青龙宫房间1迷雾消失 9:青龙宫房间2迷雾消失
@@ -509,7 +509,7 @@ public class MapScreen extends UGameScreen implements IPlcCommandListener {
                 break;
             case 20:                //青龙武器106.03
                 appearMark(34);
-            case 21:                //祭坛W5.05
+            case 21:                //祭坛105.04
                 appearMark(35);
                 break;
             default:

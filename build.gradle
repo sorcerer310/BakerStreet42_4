@@ -61,6 +61,7 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+        compile "com.squareup.okhttp:okhttp:2.7.1"
         compile fileTree(dir: 'libs', include: '*.jar')
     }
 }
@@ -92,6 +93,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxToolsVersion"
+        compile "com.squareup.okhttp:okhttp:2.7.1"
     }
 }
 

@@ -50,6 +50,7 @@ public class BakerStreet42 extends Game {
 				break;
 			case LIFESCREEN:
 				this.setScreen(ls);
+				ls.queryStars();
 				break;
 			case CUTSCREEN:
 				this.setScreen(cuts);
@@ -82,8 +83,10 @@ public class BakerStreet42 extends Game {
 	 * @param id 	当前灭的灯的索引
 	 */
 	public void setLeftLife(String id){
+		System.out.println("==========setLeftLife");
 		int i=Integer.parseInt(id);
 		ls.receivePlcCommand(i);
+		ls.queryStars();
 	}
 
 	/**
