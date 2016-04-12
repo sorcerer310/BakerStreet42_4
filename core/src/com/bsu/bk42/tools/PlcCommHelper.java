@@ -20,6 +20,7 @@ public class PlcCommHelper {
         return instance;
     }
     private ObjectMap<String,String> netcfg = new ObjectMap<String,String>();
+    private String neturl = "http://192.168.1.113:8080/pgc2";
     private PlcCommHelper(){
         try{
             PropertiesUtils.load(netcfg, Gdx.files.internal("cfg.properties").reader());
@@ -34,7 +35,8 @@ public class PlcCommHelper {
      */
     public void simpleGet(String path){
         Net.HttpRequest request = new Net.HttpRequest(Net.HttpMethods.GET);
-        request.setUrl(netcfg.get("urlpath")+path);
+//        request.setUrl(netcfg.get("urlpath")+path);
+        request.setUrl(neturl+path);
         Gdx.net.sendHttpRequest(request, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {

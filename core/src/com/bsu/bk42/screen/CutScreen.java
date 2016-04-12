@@ -35,7 +35,7 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
     private Group g_role = new Group();
     private Group g_root = new Group();
 
-    private Timeline tl_appear,tl_dead;
+    private Timeline tl_appear,tl_dead,tl_appearDelay;
     private Sound s_appear,s_dead;
 
     private StateMachine stateMachine;
@@ -183,7 +183,7 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
                                     Tween.to(g_role, ActorAccessor.OPACITY,1.0f).target(.0f)
                             )
                                 //10秒后启动锁链功能
-                                .pushPause(10000)
+                                .pushPause(10)
                             .push(Tween.call(new TweenCallback() {
                                 @Override
                                 public void onEvent(int type, BaseTween<?> source) {
@@ -207,14 +207,25 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
             tl_appear.update(delta);
         if(tl_dead!=null)
             tl_dead.update(delta);
+        if(tl_appearDelay!=null)
+            tl_appearDelay.update(delta);
         stateMachine.update();
     }
 
     @Override
     public void receivePlcCommand(int cmdi) {
         if(cmdi==0){
-            //游戏开始
-            stateMachine.changeState(CutScreenState.GAME_RUNNING);
+            //延时1分钟后触发游戏开始
+            tl_appearDelay = Timeline.createSequence()
+                    .pushPause(60)
+                    .push(Tween.call(new TweenCallback() {
+                        @Override
+                        public void onEvent(int type, BaseTween<?> source) {
+                            //游戏开始
+                            stateMachine.changeState(CutScreenState.GAME_RUNNING);
+                        }
+                    })).start();
+
         }else if(cmdi==1){
             //游戏结束
             stateMachine.changeState(CutScreenState.GAME_OVER);

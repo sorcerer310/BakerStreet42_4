@@ -380,7 +380,8 @@ class SwordImage extends Image implements Disposable {
     public void resetSword(){
         this.setPosition(0,0);
         this.setOrigin(Align.center);
-        this.rotateBy(-30);
+//        this.rotateBy(-30);
+        this.setRotation(-30);
         this.setScale(1.0f);
     }
 
