@@ -227,116 +227,19 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
         img_zhuque = new Image(tx_zhuque);
         img_zhuque.setPosition((int)(g_root.getWidth()*0.2), sixiangOffsetY,Align.bottom);
         img_zhuque.addListener(dragListener);
-//        img_zhuque.addListener(new DragListener(){
-//            private float startX,startY;
-//            @Override
-//            public void dragStart(InputEvent event, float x, float y, int pointer) {
-//                super.dragStart(event, x, y, pointer);
-//                startX = x;
-//                startY = y;
-//                dragSixiangImage(event.getTarget());
-//            }
-//
-//            @Override
-//            public void drag(InputEvent event, float x, float y, int pointer) {
-//                super.drag(event, x, y, pointer);
-//                dragActor(startX,startY,x,y,event.getTarget());
-//            }
-//
-//            @Override
-//            public void dragStop(InputEvent event, float x, float y, int pointer) {
-//                super.dragStop(event, x, y, pointer);
-////                for(Group frame:hm_FrameAndNum.values())
-//                for(String key:hm_FrameAndNum.keySet())
-//                    dropActorToFrame(key, event.getTarget(), hm_FrameAndNum.get(key), hm_FrameAndNum.get(key).getChildren().get(1));
-//            }
-//        });
-
-        img_zhuque.localToStageCoordinates(new Vector2(img_zhuque.getX(),img_zhuque.getY()));
+//        img_zhuque.localToStageCoordinates(new Vector2(img_zhuque.getX(),img_zhuque.getY()));
 
         img_baihu = new Image(tx_baihu);
         img_baihu.setPosition((int)(g_root.getWidth()*0.4), sixiangOffsetY,Align.bottom);
         img_baihu.addListener(dragListener);
-//        img_baihu.addListener(new DragListener(){
-//            private float startX,startY;
-//            @Override
-//            public void dragStart(InputEvent event, float x, float y, int pointer) {
-//                super.dragStart(event, x, y, pointer);
-//                startX = x;
-//                startY = y;
-//                dragSixiangImage(event.getTarget());
-//            }
-//
-//            @Override
-//            public void drag(InputEvent event, float x, float y, int pointer) {
-//                super.drag(event, x, y, pointer);
-//                dragActor(startX,startY,x,y,event.getTarget());
-//            }
-//
-//            @Override
-//            public void dragStop(InputEvent event, float x, float y, int pointer) {
-//                super.dragStop(event, x, y, pointer);
-//                for(String key:hm_FrameAndNum.keySet())
-//                    dropActorToFrame(key, event.getTarget(), hm_FrameAndNum.get(key), hm_FrameAndNum.get(key).getChildren().get(1));
-//            }
-//
-//        });
 
         img_xuanwu = new Image(tx_xuanwu);
         img_xuanwu.setPosition((int)(g_root.getWidth()*0.6), sixiangOffsetY,Align.bottom);
         img_xuanwu.addListener(dragListener);
-//        img_xuanwu.addListener(new DragListener(){
-//            private float startX,startY;
-//            @Override
-//            public void dragStart(InputEvent event, float x, float y, int pointer) {
-//                super.dragStart(event, x, y, pointer);
-//                startX = x;
-//                startY = y;
-//                dragSixiangImage(event.getTarget());
-//            }
-//
-//            @Override
-//            public void drag(InputEvent event, float x, float y, int pointer) {
-//                super.drag(event, x, y, pointer);
-//                dragActor(startX,startY,x,y,event.getTarget());
-//            }
-//
-//            @Override
-//            public void dragStop(InputEvent event, float x, float y, int pointer) {
-//                super.dragStop(event, x, y, pointer);
-//                for(String key:hm_FrameAndNum.keySet())
-//                    dropActorToFrame(key, event.getTarget(), hm_FrameAndNum.get(key), hm_FrameAndNum.get(key).getChildren().get(1));
-//            }
-//
-//        });
 
         img_qinglong = new Image(tx_qinglong);
         img_qinglong.setPosition((int)(g_root.getWidth()*0.8), sixiangOffsetY,Align.bottom);
         img_qinglong.addListener(dragListener);
-//        img_qinglong.addListener(new DragListener(){
-//            private float startX,startY;
-//            @Override
-//            public void dragStart(InputEvent event, float x, float y, int pointer) {
-//                super.dragStart(event, x, y, pointer);
-//                startX = x;
-//                startY = y;
-//                dragSixiangImage(event.getTarget());
-//            }
-//
-//            @Override
-//            public void drag(InputEvent event, float x, float y, int pointer) {
-//                super.drag(event, x, y, pointer);
-//                dragActor(startX,startY,x,y,event.getTarget());
-//            }
-//
-//            @Override
-//            public void dragStop(InputEvent event, float x, float y, int pointer) {
-//                super.dragStop(event, x, y, pointer);
-//                for(String key:hm_FrameAndNum.keySet())
-//                    dropActorToFrame(key, event.getTarget(), hm_FrameAndNum.get(key), hm_FrameAndNum.get(key).getChildren().get(1));
-//            }
-//
-//        });
 
         g_root.addActor(img_zhuque);
         g_root.addActor(img_baihu);
@@ -454,7 +357,7 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
     @Override
     public void show() {
 //        receivePlcCommand(0);
-//        Gdx.input.setInputProcessor(null);
+        Gdx.input.setInputProcessor(stage);
 //        stateMachine.changeState(PuzzleState.GAME_READY);
     }
 
@@ -474,12 +377,19 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
                 entity.img_baihu.setPosition((int) (entity.g_root.getWidth() * 0.4), entity.sixiangOffsetY, Align.bottom);
                 entity.img_xuanwu.setPosition((int)(entity.g_root.getWidth()*0.6), entity.sixiangOffsetY,Align.bottom);
                 entity.img_qinglong.setPosition((int)(entity.g_root.getWidth()*0.8), entity.sixiangOffsetY,Align.bottom);
-
+                //为所有图移除拖放监听器
                 Iterator<Image> iterator = entity.hm_correctImage.values().iterator();
                 while(iterator.hasNext()){
                     Image img = iterator.next();
                     img.removeListener(entity.dragListener);
                 }
+
+                //重设所有框的状态
+                Iterator<FrameGroup> it = entity.hm_FrameAndNum.values().iterator();
+                while(it.hasNext()){
+                    it.next().reset();
+                }
+
 
 //                Gdx.input.setInputProcessor(null);
             }
@@ -498,7 +408,6 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
         GAME_RUNNING{
             @Override
             public void enter(PuzzleScreen entity) {
-//                Gdx.input.setInputProcessor(entity.stage);
                 Iterator<Image> iterator = entity.hm_correctImage.values().iterator();
                 while(iterator.hasNext()){
                     Image img = iterator.next();
@@ -565,6 +474,14 @@ class FrameGroup extends Group{
             pea.startEffect();
         }
         this.isFilled = isFilled;
+    }
+
+    /**
+     * 重设所有框的状态
+     */
+    public void reset(){
+        isFilled = false;
+        isCorrect = false;
     }
 
     public boolean isCorrect() {

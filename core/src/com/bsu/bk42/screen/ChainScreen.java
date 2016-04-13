@@ -196,7 +196,7 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
      */
     private void initChain(){
         g_chain = new ChainGroup(g_root.getWidth(),g_root.getHeight(),this);
-        g_chain.debugAll();
+//        g_chain.debugAll();
         g_root.addActor(g_chain);
     }
 
