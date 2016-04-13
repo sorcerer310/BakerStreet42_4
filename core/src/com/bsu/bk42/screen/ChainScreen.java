@@ -41,17 +41,19 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
     private Texture tx_xiahouen = new Texture("chain/chara.png");
     private Texture tx_sword = new Texture("chain/sword.png");
 
-    private Sound s_appear,s_dead;
+    private Sound s_appear;
 
-    private Image img_xiahouen;
-    private SwordImage img_sword;
+    private RoleImage img_role = null;
+    private SwordImage img_sword = null;
 
     private Group g_root = new Group();
     private ChainGroup g_chain;
 
-    private Timeline tl_appear,tl_dead;
+    private Timeline tl_appear;
 
     private StateMachine stateMachine;
+
+    private InputListener skllistener = null;
 //    private Sound sound;
     public ChainScreen(){
         stage = new Stage(new StretchViewport(ScreenParams.screenWidth,ScreenParams.screenHeight));
@@ -60,28 +62,47 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
         stateMachine = new DefaultStateMachine<ChainScreen,ChainScreenState>(this,ChainScreenState.GAME_READY);
 
         s_appear = Gdx.audio.newSound(Gdx.files.internal("chain/appear.ogg"));
-        s_dead = Gdx.audio.newSound(Gdx.files.internal("chain/dead.ogg"));
-//        System.out.println(stage.getWidth());
-//        sound = Gdx.audio.newSound(new FileHandle(""));
+
         initLayout();
-        initRoleAndSword();
         initChain();
+        initRoleAndSword();
         initSwipe();
 
+        g_root.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println(">>>>>>>>>>>>>>>>g_root");
+                return super.touchDown(event, x, y, pointer, button);
+            }
+        });
 
-//        receivePlcCommand(0);
+        g_role.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println(">>>>>>>>>>>>>>>>g_role");
+                return super.touchDown(event, x, y, pointer, button);
+            }
+        });
+
+        g_chain.addListener(new InputListener(){
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println(">>>>>>>>>>>>>>>>g_chain");
+                return super.touchDown(event, x, y, pointer, button);
+            }
+        });
     }
 
     /**
      * 游戏背景及边框
      */
     private void initLayout(){
-        Table root = new Table();
         Image top = ScreenFrame.getInstance().getImgTop();
         Image bg = ScreenFrame.getInstance().getImgBg();
         Image bottom = ScreenFrame.getInstance().getImgBottom();
 
         g_root.setSize(bg.getWidth(),bg.getHeight());
+
 
         top.setPosition(0,ScreenParams.screenHeight-top.getHeight());
         bottom.setPosition(0,0);
@@ -98,12 +119,14 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
      */
     private void initSwipe(){
         skl = SwipeKnifeManager.getInstance().getNomalKnife(this.stage.getCamera());
-
-        stage.addCaptureListener(new InputListener() {
+        skllistener = new InputListener() {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                super.touchDown(event,x,y,pointer,button);
                 skl.getSwipe().touchDown((int) (x * ScreenParams.scaleWidth), (int) ScreenParams.deviceY2drawY(y * ScreenParams.scaleHeight), pointer, button);
+//                System.out.println("skl touch down");
                 return true;
+//                return super.touchDown(event,x,y,pointer,button);
             }
 
             @Override
@@ -116,10 +139,11 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
                 skl.getSwipe().touchDragged((int) (x * ScreenParams.scaleWidth), (int) ScreenParams.deviceY2drawY(y * ScreenParams.scaleHeight), pointer);
                 g_chain.cutChains(x,y);
-
                 super.touchDragged(event, x, y, pointer);
             }
-        });
+        };
+
+        stage.addCaptureListener(skllistener);
     }
 
     private Group g_role = new Group();
@@ -128,99 +152,43 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
      */
     private void initRoleAndSword(){
         //定义人物Image
-        img_xiahouen = new Image(tx_xiahouen){
-            private Timeline tl_dead;
-            {
-                Tween.registerAccessor(Image.class,new ActorAccessor());
-            }
-            /**
-             * 夏侯恩死亡
-             */
-            public void dead(){
-                tl_dead = Timeline.createParallel()
-                        .push(
-                                Tween.call(new TweenCallback() {
-                                    @Override
-                                    public void onEvent(int type, BaseTween<?> source) {
-                                        s_dead.play();
-                                    }
-                                })
-                        )
-                        .push(
-                                Timeline.createSequence()
-//                                        .pushPause(3.8f)
-                                        .push(Timeline.createSequence()
-                                                        .push(Tween.to(img_xiahouen, ActorAccessor.POS_XY, .03f).target(img_xiahouen.getX() - 5, g_role.getY()))
-                                                        .push(Tween.to(img_xiahouen, ActorAccessor.POS_XY, .03f).target(img_xiahouen.getX() + 5, g_role.getY()))
-                                                        .repeat(10, .0f)
-                                        )
-                                        .push(
-                                                Tween.to(img_xiahouen, ActorAccessor.OPACITY,1.0f).target(.0f)
-                                        )
-                                        .push(
-                                                Tween.call(new TweenCallback() {
-                                                    @Override
-                                                    public void onEvent(int i, BaseTween<?> baseTween) {
-                                                        g_root.addActor(g_chain);
-                //                                        g_chain.setZIndex(1);
-                //                                        System.out.println("ZIndex:"+g_chain.getZIndex());
-                                                        ChainScreen.this.g_chain.dropAllChain();
-                                                    }
-                                                })
-                                        )
-                        )
-                        .start();
-
-//                  逃跑
-//                tl_flee = Timeline.createSequence()
-//                        .push(
-//                                Tween.to(this, ActorAccessor.POS_XY, 1.0f).target(-1000).ease(Back.IN)
-//                        )
-//                        .push(
-//                                Tween.call(new TweenCallback() {
-//                                    @Override
-//                                    public void onEvent(int i, BaseTween<?> baseTween) {
-//                                        g_root.addActor(g_chain);
-////                                        g_chain.setZIndex(1);
-////                                        System.out.println("ZIndex:"+g_chain.getZIndex());
-//                                        ChainScreen.this.g_chain.dropAllChain();
-//                                    }
-//                                })
-//                        ).start();
-            }
-
+        img_role = new RoleImage(tx_xiahouen);
+        img_role.setOnRoleDeadListener(new RoleImage.DeadCompletedListener() {
             @Override
-            public void act(float delta) {
-                super.act(delta);
-                if(tl_dead!=null)
-                    tl_dead.update(delta);
+            public void onRoleDead(RoleImage ri) {
+//                g_root.addActor(g_chain);
+                g_chain.dropAllChain();
             }
-        };
+        });
+
         //定义宝剑Image
         img_sword = new SwordImage(tx_sword);
         //宝剑完成后，命令人物逃跑
         img_sword.setGetSwordListener(new SwordImage.GetSwordListener() {
             @Override
             public void onGetSword(SwordImage si) {
-                try {
-                    img_xiahouen.getClass().getMethod("dead").invoke(img_xiahouen);
-                    ChainScreen.this.isDrawKnifeLight = true;
-                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+                //夏侯恩死亡
+                img_role.dead();
+                //让刀光开始生效
+                ChainScreen.this.isDrawKnifeLight = true;
             }
         });
-        g_role.setSize(img_xiahouen.getWidth(),img_xiahouen.getHeight());
+        g_role.clear();
+
+        g_role.setSize(img_role.getWidth(), img_role.getHeight());
         img_sword.setPosition(g_role.getWidth()/2,-150);
 
-        g_role.addActor(img_xiahouen);
+        g_role.addActor(img_role);
         g_role.addActor(img_sword);
 
         //夏侯恩默认透明图
         Color gcolor = g_role.getColor();
         g_role.setColor(gcolor.r,gcolor.g,gcolor.b,.0f);
-
         g_root.addActor(g_role);
+
+        //g_role调试代码
+//        g_role.debugAll();
+
     }
 
     /**
@@ -228,6 +196,8 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
      */
     private void initChain(){
         g_chain = new ChainGroup(g_root.getWidth(),g_root.getHeight(),this);
+        g_chain.debugAll();
+        g_root.addActor(g_chain);
     }
 
     /**
@@ -245,14 +215,6 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
                         )
                         .push(
                                 Timeline.createSequence()
-//                                        .push(
-//                                                Tween.to(g_role, ActorAccessor.OPACITY, .1f).target(.0f)
-//                                                        .ease(TweenEquations.easeNone)
-//                                        )
-//                                        .push(
-//                                                Tween.to(g_role, ActorAccessor.OPACITY, .1f).target(1.0f)
-//                                                        .ease(TweenEquations.easeNone)
-//                                        ).repeat(5,0)
                                         .push(
                                                 Tween.to(g_role, ActorAccessor.OPACITY, 2.0f).target(1.0f)
                                                         .ease(TweenEquations.easeNone)
@@ -270,9 +232,6 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
         }
         if(tl_appear!=null)
             tl_appear.update(delta);
-        if(tl_dead!=null)
-            tl_dead.update(delta);
-
         stateMachine.update();
     }
 
@@ -298,12 +257,19 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
         GAME_READY{
             @Override
             public void enter(ChainScreen entity) {
+                //不绘制剑光
+                entity.isDrawKnifeLight = false;
                 //重设宝剑状态
-                entity.img_sword.resetSword();
-                //夏侯恩的状态应该不用重设，待测试
+                entity.img_sword.resetSword(entity.g_role);
+                //夏侯恩状态,人物图片透明度设置为1.0,g_role透明度设置为0.这样可以让人物和剑都从屏幕上消失
+                Color gcolor = entity.img_role.getColor();
+                entity.img_role.setColor(gcolor.r,gcolor.g,gcolor.b,1.0f);
 
+                Color rcolor = entity.g_role.getColor();
+                entity.g_role.setColor(rcolor.r,rcolor.g,rcolor.b,.0f);
                 //重设锁链组
                 entity.g_chain.resetChainGroup();
+
             }
             @Override
             public void update(ChainScreen entity) {}
@@ -330,6 +296,7 @@ public class ChainScreen extends UGameScreen implements IPlcCommandListener{
             public void enter(ChainScreen entity) {
                 //TODO:游戏结束向plc发送命令让锁链断开的操作写在此处
                 PlcCommHelper.getInstance().simpleGet("/plc_send_serial?plccmd=chain");
+//                entity.stage.removeCaptureListener(entity.skllistener);
             }
             @Override
             public void update(ChainScreen entity) {}
@@ -349,7 +316,6 @@ class SwordImage extends Image implements Disposable {
 
     private Timeline tl_shake;
     private Timeline tl_getsword;
-    private TweenManager tm = new TweenManager();
     private int life =5;                                                                                        //宝剑可被点击5次
     private boolean isShake = false;                                                                            //记录现在是否处于抖动状态
     private InputListener il = null;
@@ -357,32 +323,50 @@ class SwordImage extends Image implements Disposable {
     private GetSwordListener listener = null;
     public SwordImage(Texture t){
         super(t);
+        this.setSize(t.getWidth(),t.getHeight());
         this.setOrigin(Align.center);
         this.rotateBy(-30);
 //        this.setPosition(ScreenParams.screenWidth/2,this.getY());
-        il = new InputListener(){
+//        il = new InputListener(){
+//            @Override
+//            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+//                System.out.println("====================shake");
+//                shake();
+//                return super.touchDown(event, x, y, pointer, button);
+//            }
+//        };
+
+        this.addCaptureListener(new InputListener(){
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println("sword touch down");
                 shake();
                 return super.touchDown(event, x, y, pointer, button);
             }
-        };
+        });
 
-        this.addListener(il);
         //注册动画Accessor
         Tween.registerAccessor(Image.class, new ActorAccessor());
-
     }
 
     /**
      * 重设宝剑状态
      */
-    public void resetSword(){
-        this.setPosition(0,0);
+    public void resetSword(Group g_role){
+//        this.setPosition(0,0);
+        //设置位置
+        this.setPosition(g_role.getWidth()/2,-150);
+        //设置旋转原点
         this.setOrigin(Align.center);
-//        this.rotateBy(-30);
+        //设置旋转到-30度
         this.setRotation(-30);
+        //设置缩放为1.0f
         this.setScale(1.0f);
+        //生命恢复到5
+        life=5;
+        //设置抖动为false
+        isShake = false;
+//        this.addListener(il);
     }
 
     private float shakeDuration = .02f;                                                                                 //抖动持续时间
@@ -433,7 +417,7 @@ class SwordImage extends Image implements Disposable {
             isShake = true;
         }
     }
-    //获得宝剑动画
+    //获得宝剑动画通知
     public void getSword(){
         tl_getsword = Timeline.createSequence()
                 .push(
@@ -471,8 +455,8 @@ class SwordImage extends Image implements Disposable {
 
     @Override
     public void dispose() {
-        if(il!=null)
-            removeListener(il);
+//        if(il!=null)
+//            removeListener(il);
     }
 
     /**
@@ -485,6 +469,71 @@ class SwordImage extends Image implements Disposable {
     public void setGetSwordListener(GetSwordListener listener) {
         this.listener = listener;
     }
+}
+
+/**
+ * 夏侯恩图片
+ */
+class RoleImage extends Image{
+    private Timeline tl_dead;
+    private Sound s_dead;
+    private DeadCompletedListener listener;
+
+    public RoleImage(Texture t) {
+        super(t);
+        s_dead = Gdx.audio.newSound(Gdx.files.internal("chain/dead.ogg"));
+        Tween.registerAccessor(Image.class,new ActorAccessor());
+    }
+    /**
+     * 夏侯恩死亡
+     */
+    public void dead(){
+        tl_dead = Timeline.createParallel()
+                .push(
+                        Tween.call(new TweenCallback() {
+                            @Override
+                            public void onEvent(int type, BaseTween<?> source) {
+                                s_dead.play();
+                            }
+                        })
+                )
+                .push(
+                        Timeline.createSequence()
+//                                        .pushPause(3.8f)
+                                .push(Timeline.createSequence()
+                                        .push(Tween.to(this, ActorAccessor.POS_XY, .03f).target(this.getX() - 5, this.getY()))
+                                        .push(Tween.to(this, ActorAccessor.POS_XY, .03f).target(this.getX() + 5, this.getY()))
+                                        .repeat(10, .0f)
+                                )
+                                .push(
+                                        Tween.to(this, ActorAccessor.OPACITY,1.0f).target(.0f)
+                                )
+                                .push(
+                                        Tween.call(new TweenCallback() {
+                                            @Override
+                                            public void onEvent(int i, BaseTween<?> baseTween) {
+//                                                g_root.addActor(g_chain);
+//                                                ChainScreen.this.g_chain.dropAllChain();
+                                                if(listener!=null)
+                                                    listener.onRoleDead(RoleImage.this);
+                                            }
+                                        })
+                                )
+                )
+                .start();
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        if(tl_dead!=null)
+            tl_dead.update(delta);
+    }
+
+    public static interface DeadCompletedListener{
+        public void onRoleDead(RoleImage ri);
+    }
+    public void setOnRoleDeadListener(DeadCompletedListener listener){this.listener = listener;}
 }
 
 /**
@@ -620,22 +669,18 @@ class ChainGroup extends Group{
     }
 
     /**
-     * 游戏结束
-     */
-//    private void gameOver(){
-//        System.out.println("-------------game over");
-//    }
-
-    /**
      * 重设锁链组
      */
     public void resetChainGroup(){
+        System.out.println("<<<<<<<<<<<<<<<<<<<<<<resetChainGroup");
+
         //重设4条锁链
         for(ChainActor chain:chains){
             chain.resetChain();
         }
         //设置剩余锁链数为初始
         remainChainCount = chains.size;
+
     }
     /**
      * 获得该类的状态机
@@ -772,7 +817,6 @@ class ChainActor extends Group {
                             public void onEvent(int i, BaseTween<?> baseTween) {
                                 ChainActor.this.stateMachine.changeState(ChainState.STATE_NORMAL);
                                 if (life == 0) {
-                                    System.out.println("chain destroy");
                                     ChainActor.this.stateMachine.changeState(ChainState.STATE_DESTROY);
                                 }
                             }
@@ -792,7 +836,7 @@ class ChainActor extends Group {
                                 Tween.call(new TweenCallback() {
                                     @Override
                                     public void onEvent(int i, BaseTween<?> baseTween) {
-                                        ChainActor.this.setPosition(-1000,0);
+                                        ChainActor.this.setPosition(ChainActor.this.getX(),ChainActor.this.getHeight());
                                         ChainGroup cg = (ChainGroup) ChainActor.this.getParent();
                                         cg.destroyChain();
                                         cg.getStateMachine().changeState(ChainGroup.CutState.NORMAL_STATE);

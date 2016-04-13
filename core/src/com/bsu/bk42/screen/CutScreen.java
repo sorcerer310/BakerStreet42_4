@@ -11,6 +11,7 @@ import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.Telegram;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -48,6 +49,7 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
 
         s_appear = Gdx.audio.newSound(Gdx.files.internal("cut/appear.ogg"));
         s_dead = Gdx.audio.newSound(Gdx.files.internal("cut/dead.ogg"));
+        tx_role = new Texture(Gdx.files.internal("cut/role.png"));
         Tween.registerAccessor(Group.class,new ActorAccessor());
         //初始化布局
         initLayout();
@@ -63,11 +65,9 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
      */
     private void initRole(){
         //初始化刀伤
-        tx_role = new Texture(Gdx.files.internal("cut/role.png"));
         img_role = new Image(tx_role);
 
-
-
+        g_role = new Group();
         //增加人物，初始化刀伤
         g_role.addActor(img_role);
         g_role.setSize(img_role.getWidth(),img_role.getHeight());
@@ -182,15 +182,16 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
                             .push(
                                     Tween.to(g_role, ActorAccessor.OPACITY,1.0f).target(.0f)
                             )
+                        //10秒延时不在此处做,会引起bug,放在plc端延时
                                 //10秒后启动锁链功能
-                                .pushPause(10)
-                            .push(Tween.call(new TweenCallback() {
-                                @Override
-                                public void onEvent(int type, BaseTween<?> source) {
-                                    //向服务器发送chain命令，启动锁链界面
-                                    PlcCommHelper.getInstance().simpleGet("/notification.do?action=send&broadcast=A&username=&title=title&message=message&uri=chain%3A0");
-                                }
-                            }))
+//                                .pushPause(10)
+//                            .push(Tween.call(new TweenCallback() {
+//                                @Override
+//                                public void onEvent(int type, BaseTween<?> source) {
+//                                    //向服务器发送chain命令，启动锁链界面
+//                                    PlcCommHelper.getInstance().simpleGet("/notification.do?action=send&broadcast=A&username=&title=title&message=message&uri=chain%3A0");
+//                                }
+//                            }))
                 )
                 .start();
     }
@@ -217,7 +218,7 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
         if(cmdi==0){
             //延时1分钟后触发游戏开始
             tl_appearDelay = Timeline.createSequence()
-                    .pushPause(60)
+//                    .pushPause(1)
                     .push(Tween.call(new TweenCallback() {
                         @Override
                         public void onEvent(int type, BaseTween<?> source) {
@@ -244,7 +245,14 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
         GAME_READY{
             @Override
             public void enter(CutScreen entity) {
-                //TODO:似乎是不用重设状态，待测试
+                //TODO:恢复透明度即可
+//                entity.g_role.setScale(.0f);
+//
+//                Color color = entity.g_role.getColor();
+//                entity.g_role.setColor(color.r,color.g,color.b,1.0f);
+                entity.initRole();
+                System.out.println("GAME CUT READY");
+
             }
             @Override
             public void update(CutScreen entity) {}
