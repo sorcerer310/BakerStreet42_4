@@ -147,7 +147,7 @@ public class AndroidLauncher extends AndroidApplication {
 		MainTabActivity.game.getCutScreen().getStateMachine().changeState(CutScreen.CutScreenState.GAME_READY);
 		MainTabActivity.game.getChainScreen().getStateMachine().changeState(ChainScreen.ChainScreenState.GAME_READY);
 		MainTabActivity.game.getPuzzleScreen().getStateMachine().changeState(PuzzleScreen.PuzzleState.GAME_READY);
-		MsgActivity.clearMsg();														//清除消息界面数据
-//		MainTabActivity.game.resetServer();
+//		MsgActivity.clearMsg();														//清除消息界面数据
+
 	}
 }

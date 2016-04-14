@@ -730,11 +730,15 @@ class ChainActor extends Group {
     private StateMachine stateMachine;
     public enum ShapeType {NORMAL,ROTATION180,FLIPX,FLIPY};
     private Timeline tl_drop,tl_cut,tl_destroy;                                                                         //锁链的掉落动画
+
+    private Sound s_cut;
     public ChainActor(ChainActor.ShapeType st){
         stateMachine = new DefaultStateMachine<>(this, ChainState.STATE_NORMAL);
         //初始化纹理到TextureRegion对象中，并设置当前绘制的TextureRegion对象
         img_chain = new Image(new Texture(Gdx.files.internal("chain/chain.png")));
         img_chainlight = new Image(new Texture(Gdx.files.internal("chain/chain_light.png")));
+
+        s_cut = Gdx.audio.newSound(Gdx.files.internal("chain/cut.wav"));
         //默认设置锁链的反白光的透明度为0
         Color lcolor = img_chainlight.getColor();
         img_chainlight.setColor(lcolor.r,lcolor.g,lcolor.b,.0f);
@@ -797,6 +801,15 @@ class ChainActor extends Group {
         tl_cut = Timeline.createSequence()
                 .push(
                         Timeline.createParallel()
+                                .push(
+                                        Tween.call(new TweenCallback() {
+                                            @Override
+                                            public void onEvent(int type, BaseTween<?> source) {
+                                                //砍中时,播放锁链被砍击的声音
+                                                s_cut.play();
+                                            }
+                                        })
+                                )
                                 .push(
                                         Tween.to(img_chainlight, ActorAccessor.OPACITY, .3f).target(.0f)
                                                 .ease(Back.INOUT)
