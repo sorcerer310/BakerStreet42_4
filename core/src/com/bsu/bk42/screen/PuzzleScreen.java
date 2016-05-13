@@ -47,8 +47,8 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
     private Group g_root;
 
     private Random random = new Random();
-    private HashMap<String,FrameGroup> hm_FrameAndNum = new HashMap<String,FrameGroup>();                                               //所有的边框对象
-    private HashMap<String,Image> hm_correctImage = new HashMap<String,Image>();                                                   //边框中应放的正确Image
+    private HashMap<String,FrameGroup> hm_FrameAndNum = new HashMap<String,FrameGroup>();                               //所有的边框对象
+    private HashMap<String,Image> hm_correctImage = new HashMap<String,Image>();                                        //边框中应放的正确Image
 
     private ParticleEffectPool pep;                                                                                     //边框的粒子效果
     private StateMachine stateMachine;
@@ -247,10 +247,10 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
         g_root.addActor(img_qinglong);
 
         //四象正确答案
-        hm_correctImage.put("num1",img_zhuque);
-        hm_correctImage.put("num2",img_baihu);
-        hm_correctImage.put("num3",img_xuanwu);
-        hm_correctImage.put("num4",img_qinglong);
+        hm_correctImage.put("num4",img_zhuque);
+        hm_correctImage.put("num3",img_baihu);
+        hm_correctImage.put("num2",img_xuanwu);
+        hm_correctImage.put("num1",img_qinglong);
 
     }
 
@@ -377,6 +377,13 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
                 entity.img_baihu.setPosition((int) (entity.g_root.getWidth() * 0.4), entity.sixiangOffsetY, Align.bottom);
                 entity.img_xuanwu.setPosition((int)(entity.g_root.getWidth()*0.6), entity.sixiangOffsetY,Align.bottom);
                 entity.img_qinglong.setPosition((int)(entity.g_root.getWidth()*0.8), entity.sixiangOffsetY,Align.bottom);
+
+                //设置四象的可见度
+                entity.img_zhuque.setVisible(false);
+                entity.img_baihu.setVisible(false);
+                entity.img_xuanwu.setVisible(false);
+                entity.img_qinglong.setVisible(false);
+
                 //为所有图移除拖放监听器
                 Iterator<Image> iterator = entity.hm_correctImage.values().iterator();
                 while(iterator.hasNext()){
@@ -391,7 +398,7 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
                 }
 
 
-//                Gdx.input.setInputProcessor(null);
+
             }
 
             @Override
@@ -408,6 +415,13 @@ public class PuzzleScreen extends UGameScreen implements IPlcCommandListener {
         GAME_RUNNING{
             @Override
             public void enter(PuzzleScreen entity) {
+                //让四象可见
+                entity.img_zhuque.setVisible(true);
+                entity.img_baihu.setVisible(true);
+                entity.img_xuanwu.setVisible(true);
+                entity.img_qinglong.setVisible(true);
+
+
                 Iterator<Image> iterator = entity.hm_correctImage.values().iterator();
                 while(iterator.hasNext()){
                     Image img = iterator.next();
