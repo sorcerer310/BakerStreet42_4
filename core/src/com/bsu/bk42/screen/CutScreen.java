@@ -10,6 +10,7 @@ import com.badlogic.gdx.ai.fsm.DefaultStateMachine;
 import com.badlogic.gdx.ai.fsm.State;
 import com.badlogic.gdx.ai.fsm.StateMachine;
 import com.badlogic.gdx.ai.msg.Telegram;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -37,7 +38,8 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
     private Group g_root = new Group();
 
     private Timeline tl_appear,tl_dead,tl_appearDelay;
-    private Sound s_appear,s_dead;
+    private Sound s_dead;
+    private Music m_appear;
 
     private StateMachine stateMachine;
     public CutScreen(){
@@ -47,7 +49,8 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
 
         stateMachine = new DefaultStateMachine<CutScreen,CutScreenState>(this,CutScreenState.GAME_READY);
 
-        s_appear = Gdx.audio.newSound(Gdx.files.internal("cut/appear.ogg"));
+//        s_appear = Gdx.audio.newSound(Gdx.files.internal("cut/appear.ogg"));
+        m_appear = Gdx.audio.newMusic(Gdx.files.internal("cut/appear.ogg"));
         s_dead = Gdx.audio.newSound(Gdx.files.internal("cut/dead.ogg"));
         tx_role = new Texture(Gdx.files.internal("cut/role.png"));
         Tween.registerAccessor(Group.class,new ActorAccessor());
@@ -151,7 +154,7 @@ public class CutScreen extends UGameScreen implements IPlcCommandListener{
                         Tween.call(new TweenCallback() {
                             @Override
                             public void onEvent(int type, BaseTween<?> source) {
-                                s_appear.play();
+                                m_appear.play();
                             }
                         })
                 )
